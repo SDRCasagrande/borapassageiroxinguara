@@ -289,9 +289,13 @@ function RequisitosMotorista() {
           ))}
         </div>
 
-        <div className="mt-16 text-center">
+        <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="/motorista/cadastro" className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-xl transition-colors font-bold shadow-[0_0_30px_rgba(16,185,129,0.2)] group">
+            Preencher Pré-Cadastro
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </a>
           <a href="/go/whatsapp" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#121a28] hover:bg-[#1a2332] text-white px-8 py-4 rounded-xl border border-white/10 transition-colors font-bold group">
-            Começar Cadastro no WhatsApp 
+            Falar no WhatsApp 
             <ArrowRight className="w-5 h-5 text-emerald-400 group-hover:translate-x-1 transition-transform" />
           </a>
         </div>

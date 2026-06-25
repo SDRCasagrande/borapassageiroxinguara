@@ -17,6 +17,7 @@ model Motorista {
   telefone    String?
   fotoUrl     String?
   ativo       Boolean  @default(true)
+  pontos      Int      @default(0)
   corridas    Corrida[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -45,4 +46,22 @@ model Click {
   userAgent      String?
   ipAddress      String?
   createdAt      DateTime @default(now())
+}
+
+model MotoristaLead {
+  id          String   @id @default(uuid())
+  nome        String
+  telefone    String
+  cidade      String?
+  veiculo     String?
+  status      String   @default("PENDENTE") // PENDENTE, APROVADO, REJEITADO
+  createdAt   DateTime @default(now())
+}
+
+model PageView {
+  id        String   @id @default(uuid())
+  pagePath  String
+  userAgent String?
+  ipAddress String?
+  createdAt DateTime @default(now())
 }
