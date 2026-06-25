@@ -40,32 +40,27 @@ export default async function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white p-8">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex items-center justify-between mb-12">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center text-cyan-400">
-              <Shield className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black">Painel Admin</h1>
-              <p className="text-white/50">Visão Geral de Acessos e Cliques</p>
-            </div>
+    <div className="w-full">
+      <div className="max-w-7xl mx-auto">
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Dashboard de Rastreamento</h1>
+            <p className="text-sm text-slate-500 mt-1">Visão geral dos downloads e acessos do aplicativo.</p>
           </div>
-          <Link href="/" className="px-6 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full font-bold transition-all">
+          <Link href="/" className="inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-slate-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all">
             Voltar ao Site
           </Link>
         </header>
 
         {/* Banner de Erro de Banco de Dados */}
         {dbError && (
-          <div className="mb-8 p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-start gap-4">
-            <div className="p-2 bg-rose-500/20 rounded-xl">
-              <Shield className="w-5 h-5 text-rose-400" />
+          <div className="mb-8 p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-4">
+            <div className="p-2 bg-rose-100 rounded-lg">
+              <Shield className="w-5 h-5 text-rose-600" />
             </div>
             <div>
-              <h3 className="text-rose-400 font-bold">Banco de Dados Offline (ECONNREFUSED)</h3>
-              <p className="text-white/60 text-sm mt-1">
+              <h3 className="text-rose-800 font-semibold">Banco de Dados Offline</h3>
+              <p className="text-rose-600/80 text-sm mt-1">
                 A tela carregou, mas não pudemos buscar os links pois o seu banco de dados local não está rodando. 
                 Ligue o servidor do banco (ex: <code>npx prisma dev</code>) e atualize a página.
               </p>
@@ -74,58 +69,63 @@ export default async function AdminPage() {
         )}
 
         {/* Dashboard Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-[#0c1322] border border-white/5 p-6 rounded-3xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-6 opacity-10">
-              <MousePointerClick className="w-24 h-24 text-cyan-500" />
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm relative overflow-hidden group">
+            <div className="flex justify-between items-start mb-4 relative z-10">
+              <div>
+                <p className="text-sm font-medium text-slate-500">Total de Cliques</p>
+                <h3 className="text-4xl font-bold text-slate-900 mt-2">{totalClicks}</h3>
+              </div>
+              <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
+                <MousePointerClick className="w-6 h-6 text-indigo-600" />
+              </div>
             </div>
-            <h3 className="text-white/60 font-medium mb-2 relative z-10">Total de Cliques nos Links</h3>
-            <p className="text-6xl font-black text-white relative z-10">{totalClicks}</p>
+            <div className="mt-4 flex items-center text-sm">
+              <span className="text-emerald-600 font-medium flex items-center">
+                +12% 
+              </span>
+              <span className="text-slate-400 ml-2">desde o último mês</span>
+            </div>
           </div>
         </div>
 
         {/* Links Table */}
-        <div className="bg-[#0c1322] border border-white/5 rounded-3xl overflow-hidden">
-          <div className="p-6 border-b border-white/5 bg-white/[0.02]">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <LinkIcon className="w-5 h-5 text-cyan-400" /> 
-              Rastreamento de Downloads
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-200">
+            <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+              <LinkIcon className="w-5 h-5 text-indigo-600" /> 
+              Rastreamento de Links
             </h2>
           </div>
-          <div className="p-6">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="text-white/40 text-sm uppercase tracking-wider">
-                    <th className="pb-4 font-medium">Link de Origem (Botão do Site)</th>
-                    <th className="pb-4 font-medium">Destino Real (App Store/Play Store)</th>
-                    <th className="pb-4 font-medium text-right">Cliques Registrados</th>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-4 font-medium text-slate-500">Link de Origem</th>
+                  <th className="px-6 py-4 font-medium text-slate-500">Destino Real</th>
+                  <th className="px-6 py-4 font-medium text-slate-500 text-right">Cliques</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {trackingLinks.map((link) => (
+                  <tr key={link.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+                        /go/{link.slug}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-slate-500 max-w-xs truncate">
+                      {link.destino}
+                    </td>
+                    <td className="px-6 py-4 text-right font-medium text-slate-900">
+                      {link._count.cliques}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {trackingLinks.map((link) => (
-                    <tr key={link.id} className="group hover:bg-white/[0.02] transition-colors">
-                      <td className="py-4">
-                        <span className="font-mono bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-lg">
-                          /go/{link.slug}
-                        </span>
-                      </td>
-                      <td className="py-4 text-white/60 text-sm max-w-xs truncate">
-                        {link.destino}
-                      </td>
-                      <td className="py-4 text-right">
-                        <span className="inline-flex items-center justify-center bg-white/5 font-bold text-xl px-4 py-1.5 rounded-xl border border-white/5 group-hover:border-white/20 transition-colors">
-                          {link._count.cliques}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-
       </div>
     </div>
   );

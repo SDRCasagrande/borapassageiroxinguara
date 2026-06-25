@@ -30,11 +30,11 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white flex">
+    <div className="min-h-screen bg-gray-50 text-slate-800 flex font-sans">
       {/* Sidebar Mobile Overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -42,24 +42,24 @@ export default function AdminLayout({
       {/* Sidebar */}
       <aside className={`
         fixed lg:static inset-y-0 left-0 z-50
-        w-64 bg-[#0a101d] border-r border-white/5 
+        w-64 bg-white border-r border-gray-200 shadow-sm
         transform transition-transform duration-300 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         flex flex-col
       `}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-white/5">
-          <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-gray-100">
+          <Link href="/admin" className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-indigo-200 shadow-lg">
               <span className="font-bold text-white text-lg">B</span>
             </div>
-            <span className="font-bold text-lg tracking-wide">Admin PRO</span>
+            <span className="font-bold text-lg text-slate-800 tracking-tight">Tailwind Admin</span>
           </Link>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-white/50 hover:text-white">
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        <nav className="flex-1 px-4 py-6 space-y-1">
           {navigation.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -67,22 +67,22 @@ export default function AdminLayout({
                 key={item.name}
                 href={item.href}
                 className={`
-                  flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                  flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm font-medium
                   ${isActive 
-                    ? 'bg-cyan-500/10 text-cyan-400 font-medium' 
-                    : 'text-white/60 hover:bg-white/5 hover:text-white'
+                    ? 'bg-indigo-50 text-indigo-700' 
+                    : 'text-slate-600 hover:bg-gray-50 hover:text-slate-900'
                   }
                 `}
               >
-                <item.icon className={`w-5 h-5 ${isActive ? 'text-cyan-400' : 'text-white/40'}`} />
+                <item.icon className={`w-5 h-5 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
                 {item.name}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/5">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-colors">
+        <div className="p-4 border-t border-gray-100">
+          <Link href="/" className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors text-sm font-medium">
             <LogOut className="w-5 h-5" />
             Sair do Painel
           </Link>
@@ -92,30 +92,32 @@ export default function AdminLayout({
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Navbar */}
-        <header className="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 bg-[#0a101d]/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-30">
+        <header className="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-white/60 hover:text-white"
+              className="lg:hidden text-slate-500 hover:text-slate-700"
             >
               <Menu className="w-6 h-6" />
             </button>
-            <div className="hidden sm:flex items-center gap-2 bg-[#030712] border border-white/5 rounded-full px-4 py-2 w-64">
-              <Search className="w-4 h-4 text-white/40" />
+            <div className="hidden sm:flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 w-72 focus-within:ring-2 ring-indigo-500/20 focus-within:border-indigo-500 transition-all">
+              <Search className="w-4 h-4 text-slate-400" />
               <input 
                 type="text" 
-                placeholder="Buscar..." 
-                className="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-white/40"
+                placeholder="Search..." 
+                className="bg-transparent border-none outline-none text-sm w-full text-slate-700 placeholder:text-slate-400"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-white/60 hover:text-white transition-colors">
+            <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
             </button>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-500 border-2 border-white/10"></div>
+            <div className="w-9 h-9 rounded-full bg-indigo-100 border-2 border-white shadow-sm flex items-center justify-center">
+              <span className="text-sm font-bold text-indigo-700">AD</span>
+            </div>
           </div>
         </header>
 
