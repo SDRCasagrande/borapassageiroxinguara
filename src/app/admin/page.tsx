@@ -2,17 +2,14 @@ export const dynamic = 'force-dynamic';
 import { PrismaClient } from '@prisma/client';
 import { Shield, MousePointerClick, Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient({
+  accelerateUrl: process.env.DATABASE_URL,
+});
 
 export default async function AdminPage() {
   // Inicialização automática dos links caso não existam
   const defaultLinks = [
-    { slug: 'playstore', destino: 'https://play.google.com/store/apps/details?id=br.com.devbase.borapassageiro' },
+    { slug: 'playstore', destino: 'https://play.google.com/store/apps/details?id=br.com.devbase.borapassageiro&pcampaignid=web_share' },
     { slug: 'appstore', destino: 'https://apps.apple.com/br/app/bora-passageiro-clientes/id1579518558' },
     { slug: 'whatsapp', destino: 'https://wa.me/5594992777717?text=Oi%20Bora%20Passageiro' },
   ];
