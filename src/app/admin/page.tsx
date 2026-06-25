@@ -14,29 +14,30 @@ export default async function AdminPage() {
     { slug: 'whatsapp', destino: 'https://wa.me/5594992777717?text=Oi%20Bora%20Passageiro' },
   ];
 
-  for (const link of defaultLinks) {
-    await prisma.trackingLink.upsert({
-      where: { slug: link.slug },
-      update: {}, // Não faz nada se já existe
-      create: { slug: link.slug, destino: link.destino },
-    });
-  }
+  let trackingLinks: any[] = [];
+  let totalClicks = 0;
+  let dbError = false;
 
-  // Busca estatísticas
-  const trackingLinks = await prisma.trackingLink.findMany({
-    include: {
-      _count: {
-        select: { cliques: true }
-      }
-    },
-    orderBy: {
-      cliques: {
-        _count: 'desc'
-      }
+  try {
+    for (const link of defaultLinks) {
+      await prisma.trackingLink.upsert({
+        where: { slug: link.slug },
+        update: {},
+        create: { slug: link.slug, destino: link.destino },
+      });
     }
-  });
 
-  const totalClicks = trackingLinks.reduce((acc, link) => acc + link._count.cliques, 0);
+    // Busca estatísticas
+    trackingLinks = await prisma.trackingLink.findMany({
+      include: { _count: { select: { cliques: true } } },
+      orderBy: { cliques: { _count: 'desc' } }
+    });
+
+    totalClicks = trackingLinks.reduce((acc, link) => acc + link._count.cliques, 0);
+  } catch (error) {
+    console.error("Erro de conexão com o Banco de Dados:", error);
+    dbError = true;
+  }
 
   return (
     <div className="min-h-screen bg-[#030712] text-white p-8">
@@ -55,6 +56,22 @@ export default async function AdminPage() {
             Voltar ao Site
           </Link>
         </header>
+
+        {/* Banner de Erro de Banco de Dados */}
+        {dbError && (
+          <div className="mb-8 p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-start gap-4">
+            <div className="p-2 bg-rose-500/20 rounded-xl">
+              <Shield className="w-5 h-5 text-rose-400" />
+            </div>
+            <div>
+              <h3 className="text-rose-400 font-bold">Banco de Dados Offline (ECONNREFUSED)</h3>
+              <p className="text-white/60 text-sm mt-1">
+                A tela carregou, mas não pudemos buscar os links pois o seu banco de dados local não está rodando. 
+                Ligue o servidor do banco (ex: <code>npx prisma dev</code>) e atualize a página.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Dashboard Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
