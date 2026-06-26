@@ -51,12 +51,12 @@ export default function AdminLayout({
         flex flex-col shadow-xl lg:shadow-sm
       `}>
         {/* Logo Area */}
-        <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100">
+        <div className="py-6 px-6 border-b border-gray-100 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-3">
             <img 
               src="/assets/Logotipo.png" 
               alt="Bora Passageiro" 
-              className="h-10 w-auto object-contain"
+              className="h-14 w-auto object-contain"
             />
           </Link>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600 transition-colors">
