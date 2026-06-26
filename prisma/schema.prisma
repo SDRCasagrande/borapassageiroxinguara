@@ -17,7 +17,9 @@ model Motorista {
   telefone    String?
   fotoUrl     String?
   ativo       Boolean  @default(true)
+  status      String   @default("ativo") // ativo, alerta
   pontos      Int      @default(0)
+  corridasMes Int      @default(0)
   corridas    Corrida[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

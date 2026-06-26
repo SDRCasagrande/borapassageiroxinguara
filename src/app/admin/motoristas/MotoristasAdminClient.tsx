@@ -1,111 +1,178 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Star, User, Image as ImageIcon } from 'lucide-react';
-import { addPontos } from './actions';
+import { useRef } from "react";
+import { Users, Plus, Car, Tag, Trash2, RotateCcw, Shield, AlertTriangle } from "lucide-react";
 
 interface Motorista {
   id: string;
   nome: string;
-  telefone: string | null;
+  corridasMes: number;
+  status: string;
   fotoUrl: string | null;
-  pontos: number;
 }
 
-export function MotoristasAdminClient({ motoristas }: { motoristas: Motorista[] }) {
-  const [loadingId, setLoadingId] = useState<string | null>(null);
+interface Props {
+  motoristas: Motorista[];
+  dbError: boolean;
+  cadastrarMotorista: (formData: FormData) => Promise<void>;
+  adicionarCorridas: (formData: FormData) => Promise<void>;
+  alterarStatus: (formData: FormData) => Promise<void>;
+  removerMotorista: (formData: FormData) => Promise<void>;
+  zerarMes: () => Promise<void>;
+}
 
-  const handleAddPoints = async (id: string, points: number) => {
-    setLoadingId(id);
-    try {
-      await addPontos(id, points);
-      window.location.reload(); // Atualiza a página para refletir os novos pontos
-    } catch (error) {
-      alert("Erro ao adicionar pontos.");
-    } finally {
-      setLoadingId(null);
-    }
-  };
+export function MotoristasAdminClient({
+  motoristas, dbError,
+  cadastrarMotorista, adicionarCorridas, alterarStatus, removerMotorista, zerarMes
+}: Props) {
+  const formCadastroRef = useRef<HTMLFormElement>(null);
+  const formCorridasRef = useRef<HTMLFormElement>(null);
+  const formStatusRef = useRef<HTMLFormElement>(null);
+  const formRemoverRef = useRef<HTMLFormElement>(null);
+
+  const sorted = [...motoristas].sort((a, b) => b.corridasMes - a.corridasMes || a.nome.localeCompare(b.nome));
+
+  if (dbError) {
+    return (
+      <div className="p-6 bg-rose-50 border border-rose-200 rounded-2xl">
+        <h3 className="text-rose-800 font-semibold flex items-center gap-2"><Shield className="w-5 h-5" /> Banco de Dados Offline</h3>
+        <p className="text-rose-600/80 text-sm mt-1">Ligue o banco de dados para gerenciar os motoristas.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-      <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
-        <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
-          <User className="w-5 h-5 text-indigo-600" /> 
-          Motoristas Cadastrados ({motoristas.length})
-        </h2>
-        <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">
-          Cadastrar Motorista
-        </button>
-      </div>
+    <div className="w-full">
+      <div className="max-w-7xl mx-auto">
+        <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+              <Users className="w-6 h-6 text-indigo-600" />
+              Tabela de Corridas — Bora Pra Cima! 🚀
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">Gerencie motoristas, lance corridas diárias e controle o ranking.</p>
+          </div>
+          <button
+            type="button"
+            onClick={async () => {
+              if (confirm("⚠️ ZERAR todas as corridas do mês? Os motoristas continuam cadastrados, mas voltam para 0 corridas.")) {
+                await zerarMes();
+                window.location.reload();
+              }
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-50 border border-rose-200 rounded-xl text-sm font-medium text-rose-700 hover:bg-rose-100 transition-all"
+          >
+            <RotateCcw className="w-4 h-4" /> Zerar Mês
+          </button>
+        </header>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm whitespace-nowrap">
-          <thead className="bg-white border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-4 font-medium text-slate-500">Motorista</th>
-              <th className="px-6 py-4 font-medium text-slate-500">Foto (URL)</th>
-              <th className="px-6 py-4 font-medium text-slate-500">Pontuação</th>
-              <th className="px-6 py-4 font-medium text-slate-500 text-right">Ações (Gamificação)</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {motoristas.length === 0 && (
-              <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
-                  Nenhum motorista cadastrado ainda.
-                </td>
-              </tr>
-            )}
-            {motoristas.map((motorista) => (
-              <tr key={motorista.id} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-6 py-4 flex items-center gap-3">
-                  <img 
-                    src={motorista.fotoUrl || "https://i.pravatar.cc/150?u=fallback"} 
-                    alt={motorista.nome}
-                    className="w-10 h-10 rounded-full object-cover border border-gray-200"
-                  />
-                  <div>
-                    <p className="font-medium text-slate-900">{motorista.nome}</p>
-                    <p className="text-xs text-slate-500">{motorista.telefone || 'Sem telefone'}</p>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2 text-slate-500">
-                    <ImageIcon className="w-4 h-4" />
-                    <span className="w-32 truncate block" title={motorista.fotoUrl || ''}>
-                      {motorista.fotoUrl ? "URL Cadastrada" : "Sem foto"}
+        <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+          {/* RANKING TABLE */}
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+              <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <Car className="w-4 h-4 text-indigo-600" />
+                Ranking por Corridas ({sorted.length} motoristas)
+              </h2>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {sorted.length === 0 && (
+                <div className="px-6 py-12 text-center text-slate-400">Cadastre motoristas para iniciar o ranking.</div>
+              )}
+              {sorted.map((m, i) => {
+                const rank = i + 1;
+                const isTop3 = rank <= 3;
+                const trophy = rank === 1 ? "👑" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : "";
+                return (
+                  <div key={m.id} className={`flex items-center gap-4 px-6 py-3.5 hover:bg-gray-50/50 transition-colors ${rank === 1 ? "bg-amber-50/50" : ""}`}>
+                    <span className={`w-10 text-center font-black ${rank === 1 ? "text-amber-500 text-lg" : rank === 2 ? "text-slate-400" : rank === 3 ? "text-orange-500" : "text-slate-300"}`}>
+                      {trophy} #{rank}
+                    </span>
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <span className="font-semibold text-slate-800 truncate">{m.nome}</span>
+                      <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${m.status === "alerta" ? "bg-orange-400 shadow-[0_0_6px_rgba(251,146,60,0.5)]" : "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]"}`} />
+                    </div>
+                    <span className={`font-mono font-bold text-sm ${isTop3 ? "text-indigo-600" : "text-slate-400"}`}>
+                      {isTop3 ? `${m.corridasMes} corridas` : "🔒 Confidencial"}
                     </span>
                   </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">
-                    <Star className="w-4 h-4 text-amber-500" />
-                    {motorista.pontos}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button 
-                      onClick={() => handleAddPoints(motorista.id, 10)}
-                      disabled={loadingId === motorista.id}
-                      className="px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium rounded-md transition-colors"
-                    >
-                      +10 pts
-                    </button>
-                    <button 
-                      onClick={() => handleAddPoints(motorista.id, 50)}
-                      disabled={loadingId === motorista.id}
-                      className="px-3 py-1.5 bg-indigo-600 text-white hover:bg-indigo-700 font-medium rounded-md transition-colors shadow-sm"
-                    >
-                      +50 pts
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ADMIN FORMS */}
+          <div className="space-y-4">
+            {/* Cadastrar */}
+            <form ref={formCadastroRef} action={async (fd) => { await cadastrarMotorista(fd); formCadastroRef.current?.reset(); }}
+              className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 space-y-3">
+              <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                <Plus className="w-4 h-4 text-emerald-600" /> Cadastrar Motorista
+              </h3>
+              <div>
+                <label className="text-xs text-slate-500 font-medium block mb-1">Nome</label>
+                <input name="nome" required placeholder="Ex.: Carlos Silva" maxLength={40} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all" />
+              </div>
+              <div>
+                <label className="text-xs text-slate-500 font-medium block mb-1">Etiqueta</label>
+                <select name="status" className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all">
+                  <option value="ativo">🟢 Ativo</option>
+                  <option value="alerta">🟠 Alerta</option>
+                </select>
+              </div>
+              <button type="submit" className="w-full bg-indigo-600 text-white font-medium py-2.5 rounded-xl hover:bg-indigo-700 transition-all text-sm shadow-sm">Cadastrar</button>
+            </form>
+
+            {/* Corridas */}
+            <form ref={formCorridasRef} action={async (fd) => { await adicionarCorridas(fd); formCorridasRef.current?.reset(); }}
+              className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 space-y-3">
+              <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                <Car className="w-4 h-4 text-amber-600" /> 🏁 Corridas do Dia
+              </h3>
+              <select name="motoristaId" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all">
+                {sorted.map(m => <option key={m.id} value={m.id}>{m.nome} ({m.corridasMes})</option>)}
+              </select>
+              <input name="quantidade" type="number" min="1" step="1" required defaultValue="1" className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all" />
+              <button type="submit" className="w-full bg-amber-500 text-white font-medium py-2.5 rounded-xl hover:bg-amber-600 transition-all text-sm shadow-sm">Somar Corridas</button>
+            </form>
+
+            {/* Status */}
+            <form ref={formStatusRef} action={async (fd) => { await alterarStatus(fd); formStatusRef.current?.reset(); }}
+              className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 space-y-3">
+              <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                <Tag className="w-4 h-4 text-blue-600" /> 🏷️ Alterar Etiqueta
+              </h3>
+              <select name="motoristaId" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all">
+                {sorted.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}
+              </select>
+              <select name="status" className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all">
+                <option value="ativo">🟢 Ativo</option>
+                <option value="alerta">🟠 Alerta</option>
+              </select>
+              <button type="submit" className="w-full bg-blue-600 text-white font-medium py-2.5 rounded-xl hover:bg-blue-700 transition-all text-sm shadow-sm">Atualizar</button>
+            </form>
+
+            {/* Remover */}
+            <form ref={formRemoverRef} action={async (fd) => {
+              const nome = sorted.find(m => m.id === fd.get("motoristaId"))?.nome;
+              if (!confirm(`Remover ${nome} do ranking?`)) return;
+              await removerMotorista(fd);
+            }} className="bg-white border border-rose-200 rounded-2xl shadow-sm p-5 space-y-3">
+              <h3 className="text-sm font-semibold text-rose-800 flex items-center gap-2">
+                <Trash2 className="w-4 h-4" /> 🗑️ Remover Motorista
+              </h3>
+              <select name="motoristaId" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-400 transition-all">
+                {sorted.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}
+              </select>
+              <button type="submit" className="w-full bg-rose-600 text-white font-medium py-2.5 rounded-xl hover:bg-rose-700 transition-all text-sm shadow-sm">Remover</button>
+            </form>
+
+            <p className="text-xs text-slate-400 px-2">
+              <AlertTriangle className="w-3 h-3 inline mr-1" />
+              Dica: apenas Top 1, 2 e 3 mostram corridas. Do 4º em diante, o valor aparece como 🔒 Confidencial.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
