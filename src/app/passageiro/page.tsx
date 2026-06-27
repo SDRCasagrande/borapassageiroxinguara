@@ -19,6 +19,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { ActionButtons } from '@/components/ActionButtons';
+import { DownloadModalProvider, DownloadButton, PLAY_STORE_URL, APP_STORE_URL } from '@/components/DownloadModal';
 import { useRef, useState } from 'react';
 
 /* ─── ANIMATION VARIANTS ──────────────────────────────── */
@@ -72,12 +73,11 @@ function PremiumHeader() {
           ))}
         </nav>
 
-        <a
-          href="/go/playstore"
+        <DownloadButton
           className="hidden md:inline-block text-sm font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-2.5 rounded-full hover:scale-105 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-300"
         >
           Baixar App
-        </a>
+        </DownloadButton>
 
         {/* Hamburger Mobile */}
         <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden p-2 text-white/80 hover:text-white transition-colors" aria-label="Menu">
@@ -104,12 +104,11 @@ function PremiumHeader() {
                 {link.label}
               </a>
             ))}
-            <a
-              href="/go/playstore"
-              className="text-sm font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-full text-center mt-2"
+            <DownloadButton
+              className="text-sm font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-full text-center mt-2 w-full"
             >
               Baixar App
-            </a>
+            </DownloadButton>
           </nav>
         </motion.div>
       )}
@@ -611,7 +610,9 @@ function DownloadCTA() {
             {/* Store Badges */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <motion.a
-                href="/go/playstore"
+                href={PLAY_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: 'spring', stiffness: 400 }}
@@ -625,7 +626,9 @@ function DownloadCTA() {
               </motion.a>
 
               <motion.a
-                href="/go/appstore"
+                href={APP_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: 'spring', stiffness: 400 }}
@@ -697,8 +700,8 @@ function Footer() {
               {[
                 { href: '/motorista', label: 'Seja Motorista' },
                 { href: '/ranking', label: 'Ranking' },
-                { href: '/go/playstore', label: 'Google Play' },
-                { href: '/go/appstore', label: 'App Store' },
+                { href: PLAY_STORE_URL, label: 'Google Play' },
+                { href: APP_STORE_URL, label: 'App Store' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -812,6 +815,7 @@ function FloatingWhatsApp() {
 /* ─── EXPORT PAGE ─────────────────────────────────────── */
 export default function PassageiroPage() {
   return (
+    <DownloadModalProvider>
     <div className="bg-[#030712] min-h-screen selection:bg-cyan-500/30 selection:text-cyan-50 overflow-x-hidden">
       <PremiumHeader />
 
@@ -828,5 +832,6 @@ export default function PassageiroPage() {
       <Footer />
       <FloatingWhatsApp />
     </div>
+    </DownloadModalProvider>
   );
 }

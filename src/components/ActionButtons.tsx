@@ -1,12 +1,14 @@
 'use client';
 
+import { PLAY_STORE_URL, APP_STORE_URL } from './DownloadModal';
+
 export function ActionButtons() {
     return (
         <div className="flex flex-col sm:flex-row gap-6 mt-10 w-full items-center justify-center md:justify-start">
             <a
-                // Ao clicar, o Next.js acessa a rota /go/playstore
-                // que salva o clique no Prisma e redireciona para a Play Store real
-                href="/go/playstore"
+                href={PLAY_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="transform hover:scale-105 transition-transform duration-300 drop-shadow-xl"
             >
                 <img
@@ -17,9 +19,9 @@ export function ActionButtons() {
             </a>
 
             <a
-                // Ao clicar, o Next.js acessa a rota /go/appstore
-                // que salva o clique no Prisma e redireciona para a App Store real
-                href="/go/appstore"
+                href={APP_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="transform hover:scale-105 transition-transform duration-300 drop-shadow-xl"
             >
                 <img
