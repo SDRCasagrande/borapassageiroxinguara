@@ -160,9 +160,6 @@ export function RankingClient({ motoristas }: { motoristas: Motorista[] }) {
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
         <header className="text-center mb-12 relative">
-          <Link href="/" className="absolute left-0 top-1 text-white/40 hover:text-white flex items-center gap-1 text-sm transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Voltar
-          </Link>
           <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring' }} className="inline-flex items-center justify-center mb-4">
             <img src="/assets/Logotipo.png" alt="Bora Passageiro" className="h-24 sm:h-32 brightness-0 invert drop-shadow-[0_0_40px_rgba(255,255,255,0.3)] object-contain" />
           </motion.div>
