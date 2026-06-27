@@ -66,9 +66,9 @@ async function seedMotoristas() {
     }
 
     const links = [
-      { slug: 'playstore', destino: 'https://play.google.com/store/apps/details?id=br.com.client.borapassageiro' },
-      { slug: 'appstore', destino: 'https://apps.apple.com/br/app/idSEU_APP_ID' },
-      { slug: 'whatsapp', destino: 'https://wa.me/55XXXXXXXXXXX' }
+      { slug: 'playstore', destino: 'https://play.google.com/store/apps/details?id=br.com.devbase.borapassageiro&pcampaignid=web_share' },
+      { slug: 'appstore', destino: 'https://apps.apple.com/br/app/bora-passageiro-clientes/id1579518558' },
+      { slug: 'whatsapp', destino: 'https://wa.me/5594991585858' } // Placeholder for WhatsApp just in case, though they didn't provide one yet
     ];
 
     let linksCreated = 0;
@@ -82,6 +82,12 @@ async function seedMotoristas() {
           }
         });
         linksCreated++;
+      } else {
+        // Se o link já existir, a gente atualiza para garantir que a URL final está correta!
+        await prisma.trackingLink.update({
+          where: { slug: link.slug },
+          data: { destino: link.destino }
+        });
       }
     }
 
