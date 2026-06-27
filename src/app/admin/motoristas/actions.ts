@@ -9,12 +9,14 @@ import { revalidatePath } from "next/cache";
 export async function cadastrarMotorista(formData: FormData) {
   const nome = formData.get('nome') as string;
   const status = formData.get('status') as string || 'ativo';
+  const fotoUrl = formData.get('fotoUrl') as string || null;
 
   if (!nome || nome.trim() === '') throw new Error('Nome é obrigatório');
 
   await prisma.motorista.create({
     data: {
       nome: nome.trim(),
+      fotoUrl: fotoUrl ? fotoUrl.trim() : null,
       status: status === 'alerta' ? 'alerta' : 'ativo',
       ativo: true,
       corridasMes: 0,
@@ -35,12 +37,19 @@ export async function adicionarCorridas(formData: FormData) {
 
   if (!motoristaId || !quantidade || quantidade <= 0) throw new Error('Dados inválidos');
 
-  await prisma.motorista.update({
-    where: { id: motoristaId },
-    data: {
-      corridasMes: { increment: quantidade },
-    },
-  });
+  // Usa transaction para garantir consistência
+  await prisma.$transaction([
+    prisma.motorista.update({
+      where: { id: motoristaId },
+      data: { corridasMes: { increment: quantidade } },
+    }),
+    prisma.corrida.createMany({
+      data: Array.from({ length: quantidade }).map(() => ({
+        motoristaId,
+        data: new Date(),
+      })),
+    })
+  ]);
 
   revalidatePath('/admin/motoristas');
   revalidatePath('/ranking');
@@ -87,6 +96,54 @@ export async function removerMotorista(formData: FormData) {
 export async function zerarMes() {
   await prisma.motorista.updateMany({
     data: { corridasMes: 0 },
+  });
+
+  revalidatePath('/admin/motoristas');
+  revalidatePath('/ranking');
+}
+
+// ──────────────────────────────────────────
+// ADICIONAR CORRIDAS (Perfil)
+// ──────────────────────────────────────────
+export async function adicionarCorridasProfile(motoristaId: string, quantidade: number) {
+  if (!motoristaId || !quantidade || quantidade <= 0) throw new Error('Dados inválidos');
+
+  await prisma.$transaction([
+    prisma.motorista.update({
+      where: { id: motoristaId },
+      data: { corridasMes: { increment: quantidade } },
+    }),
+    prisma.corrida.createMany({
+      data: Array.from({ length: quantidade }).map(() => ({
+        motoristaId,
+        data: new Date(),
+      })),
+    })
+  ]);
+
+  revalidatePath(`/admin/motoristas/${motoristaId}`);
+  revalidatePath('/admin/motoristas');
+  revalidatePath('/ranking');
+}
+
+// ──────────────────────────────────────────
+// ATUALIZAR MOTORISTA (Edição em Tabela)
+// ──────────────────────────────────────────
+export async function atualizarMotorista(formData: FormData) {
+  const id = formData.get('id') as string;
+  const nome = formData.get('nome') as string;
+  const status = formData.get('status') as string;
+  const fotoUrl = formData.get('fotoUrl') as string;
+
+  if (!id || !nome || nome.trim() === '') throw new Error('Nome é obrigatório');
+
+  await prisma.motorista.update({
+    where: { id },
+    data: {
+      nome: nome.trim(),
+      status: status === 'alerta' ? 'alerta' : 'ativo',
+      fotoUrl: fotoUrl ? fotoUrl.trim() : null,
+    }
   });
 
   revalidatePath('/admin/motoristas');

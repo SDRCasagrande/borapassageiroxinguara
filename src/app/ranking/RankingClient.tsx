@@ -126,6 +126,7 @@ export function RankingClient({ motoristas }: { motoristas: Motorista[] }) {
   const top3 = motoristas.slice(0, 3);
   const others = motoristas.slice(3);
   const [mounted, setMounted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   useEffect(() => { setMounted(true); }, []);
 
   const first = top3[0];
@@ -163,7 +164,7 @@ export function RankingClient({ motoristas }: { motoristas: Motorista[] }) {
             <ArrowLeft className="w-4 h-4" /> Voltar
           </Link>
           <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring' }} className="inline-flex items-center justify-center mb-4">
-            <Trophy className="w-12 h-12 sm:w-16 sm:h-16 text-amber-400 drop-shadow-[0_0_30px_rgba(251,191,36,0.6)] fill-amber-400/20" />
+            <img src="/assets/Logotipo.png" alt="Bora Passageiro" className="h-16 sm:h-20 drop-shadow-[0_0_30px_rgba(251,191,36,0.6)] object-contain" />
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-3xl sm:text-5xl font-black">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">Hall da Fama</span>
@@ -182,34 +183,66 @@ export function RankingClient({ motoristas }: { motoristas: Motorista[] }) {
         </div>
 
         {/* Leaderboard 4th+ (corridas ocultas) */}
-        {others.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5 }} className="max-w-2xl mx-auto">
-            <div className="bg-gradient-to-b from-[#1a1f3a]/80 to-[#0d1025]/80 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm">
-              <div className="px-6 py-4 border-b border-white/5 bg-white/[0.02]">
-                <h2 className="text-base font-bold flex items-center gap-2">
-                  <Medal className="w-5 h-5 text-indigo-400" /> Classificação Geral
-                </h2>
-              </div>
-              <div className="divide-y divide-white/5">
-                {others.map((m, i) => (
-                  <motion.div key={m.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.7 + i * 0.1 }}
-                    className="flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.02] transition-colors"
-                  >
-                    <span className="w-10 text-white/30 font-mono font-bold">#{i + 4}</span>
-                    <img src={m.fotoUrl || `https://i.pravatar.cc/150?u=${m.id}`} alt={m.nome} className="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" />
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <span className="font-medium text-white truncate">{m.nome}</span>
-                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${m.status === 'alerta' ? 'bg-orange-400' : 'bg-emerald-400'}`} />
-                    </div>
-                    <span className="flex items-center gap-1 text-white/30 text-sm font-medium">
-                      <Lock className="w-3.5 h-3.5" /> Confidencial
+        {others.length > 0 && (() => {
+          const pageSize = 10;
+          const totalPages = Math.ceil(others.length / pageSize);
+          const startIndex = (currentPage - 1) * pageSize;
+          const currentOthers = others.slice(startIndex, startIndex + pageSize);
+
+          return (
+            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5 }} className="max-w-2xl mx-auto">
+              <div className="bg-gradient-to-b from-[#1a1f3a]/80 to-[#0d1025]/80 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm">
+                <div className="px-6 py-4 border-b border-white/5 bg-white/[0.02]">
+                  <h2 className="text-base font-bold flex items-center gap-2">
+                    <Medal className="w-5 h-5 text-indigo-400" /> Classificação Geral
+                  </h2>
+                </div>
+                <div className="divide-y divide-white/5">
+                  {currentOthers.map((m, i) => {
+                    const globalRank = startIndex + i + 4;
+                    return (
+                      <motion.div key={m.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.7 + i * 0.05 }}
+                        className="flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.02] transition-colors"
+                      >
+                        <span className="w-10 text-white/30 font-mono font-bold">#{globalRank}</span>
+                        <img src={m.fotoUrl || `https://i.pravatar.cc/150?u=${m.id}`} alt={m.nome} className="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" />
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <span className="font-medium text-white truncate">{m.nome}</span>
+                          <span className={`w-2 h-2 rounded-full flex-shrink-0 ${m.status === 'alerta' ? 'bg-orange-400' : 'bg-emerald-400'}`} />
+                        </div>
+                        <span className="flex items-center gap-1 text-white/30 text-sm font-medium">
+                          <Lock className="w-3.5 h-3.5" /> Confidencial
+                        </span>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="px-6 py-4 bg-white/[0.02] border-t border-white/5 flex items-center justify-between">
+                    <button
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1.5 rounded-lg bg-white/5 text-white/60 text-sm font-medium hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Anterior
+                    </button>
+                    <span className="text-sm font-medium text-white/40">
+                      Página {currentPage} de {totalPages}
                     </span>
-                  </motion.div>
-                ))}
+                    <button
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1.5 rounded-lg bg-white/5 text-white/60 text-sm font-medium hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Próxima
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          );
+        })()}
 
         {/* Footer */}
         <motion.footer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }} className="text-center mt-12 pb-8">

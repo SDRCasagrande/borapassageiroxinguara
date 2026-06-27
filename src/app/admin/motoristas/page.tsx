@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { MotoristasAdminClient } from "./MotoristasAdminClient";
-import { cadastrarMotorista, adicionarCorridas, alterarStatus, removerMotorista, zerarMes } from "./actions";
+import { cadastrarMotorista, adicionarCorridas, alterarStatus, removerMotorista, zerarMes, atualizarMotorista } from "./actions";
 
 export default async function AdminMotoristasPage() {
   let motoristas: any[] = [];
@@ -25,6 +25,7 @@ export default async function AdminMotoristasPage() {
       alterarStatus={alterarStatus}
       removerMotorista={removerMotorista}
       zerarMes={zerarMes}
+      atualizarMotorista={atualizarMotorista}
     />
   );
 }

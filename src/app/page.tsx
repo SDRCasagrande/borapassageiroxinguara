@@ -50,7 +50,7 @@ export default function Home() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           whileHover={{ flex: 1.15 }}
-          onClick={() => router.push('/passageiro')}
+          onClick={() => window.location.href = 'https://passageiro.borapassageiroxinguara.com.br'}
           className="relative group cursor-pointer flex-1 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-white/5 overflow-hidden min-h-[50vh] md:min-h-screen"
           style={{ transition: 'flex 0.6s cubic-bezier(0.2, 0.7, 0.2, 1)' }}
         >
@@ -92,7 +92,7 @@ export default function Home() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
           whileHover={{ flex: 1.15 }}
-          onClick={() => router.push('/motorista')}
+          onClick={() => window.location.href = 'https://motorista.borapassageiroxinguara.com.br'}
           className="relative group cursor-pointer flex-1 flex flex-col items-center justify-center overflow-hidden min-h-[50vh] md:min-h-screen"
           style={{ transition: 'flex 0.6s cubic-bezier(0.2, 0.7, 0.2, 1)' }}
         >
@@ -135,15 +135,15 @@ export default function Home() {
         transition={{ delay: 1 }}
         className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-center gap-6 pb-4"
       >
-        <Link href="/ranking" className="text-xs text-white/20 hover:text-amber-400 transition-colors font-medium">
+        <a href="https://ranking.borapassageiroxinguara.com.br" className="text-xs text-white/20 hover:text-amber-400 transition-colors font-medium">
           🏆 Ranking
-        </Link>
+        </a>
         <span className="text-white/10">•</span>
         <span className="text-xs text-white/15">Bora Passageiro © {new Date().getFullYear()}</span>
         <span className="text-white/10">•</span>
-        <Link href="/admin" className="text-xs text-white/20 hover:text-white/40 transition-colors font-medium">
+        <a href="https://admin.borapassageiroxinguara.com.br" className="text-xs text-white/20 hover:text-white/40 transition-colors font-medium">
           Admin
-        </Link>
+        </a>
       </motion.div>
     </div>
   );

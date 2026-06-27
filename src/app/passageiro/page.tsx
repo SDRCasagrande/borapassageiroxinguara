@@ -43,13 +43,13 @@ function PremiumHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-2xl border-b border-white/[0.06] text-white transition-all duration-500">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
+        <a href="https://borapassageiroxinguara.com.br" className="flex items-center gap-2 group">
           <img
             src="/assets/Logotipo.png"
             alt="Bora Passageiro"
             className="h-10 w-auto object-contain brightness-0 invert transition-transform duration-300 group-hover:scale-105"
           />
-        </Link>
+        </a>
 
         <nav className="hidden md:flex items-center gap-8">
           {[
@@ -728,18 +728,18 @@ function Footer() {
             Bora Passageiro © {new Date().getFullYear()}. Todos os direitos reservados.
           </p>
           <div className="flex items-center gap-6">
-            <Link
-              href="/motorista"
+            <a
+              href="https://motorista.borapassageiroxinguara.com.br"
               className="text-white/20 text-sm hover:text-cyan-400 transition-colors duration-300"
             >
               Motorista
-            </Link>
-            <Link
-              href="/ranking"
+            </a>
+            <a
+              href="https://ranking.borapassageiroxinguara.com.br"
               className="text-white/20 text-sm hover:text-cyan-400 transition-colors duration-300"
             >
               Ranking
-            </Link>
+            </a>
           </div>
         </div>
       </div>

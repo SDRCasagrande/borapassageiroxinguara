@@ -27,7 +27,9 @@ export function middleware(req: NextRequest) {
   else if (hostname.startsWith('admin.')) {
     // Se a rota for /login, não aplicamos a reescrita para /admin/login nem tratamos como rota protegida
     if (url.pathname !== '/login') {
-      url.pathname = `/admin${url.pathname === '/' ? '' : url.pathname}`;
+      if (!url.pathname.startsWith('/admin')) {
+        url.pathname = `/admin${url.pathname === '/' ? '' : url.pathname}`;
+      }
       isAdminRoute = true;
     }
     isRewrite = true;

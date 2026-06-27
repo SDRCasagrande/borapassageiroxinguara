@@ -29,13 +29,13 @@ function PremiumHeaderMotorista() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0f18]/80 backdrop-blur-xl border-b border-white/5 text-white transition-all duration-300">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+        <a href="https://borapassageiroxinguara.com.br" className="flex items-center gap-2 group">
           <img
             src="/assets/Logotipo.png"
             alt="Bora Passageiro"
-            className="h-10 w-auto object-contain brightness-0 invert group-hover:opacity-80 transition-opacity"
+            className="h-10 w-auto object-contain brightness-0 invert transition-transform duration-300 group-hover:scale-105"
           />
-        </Link>
+        </a>
 
         {/* Nav Links */}
         <nav className="hidden md:flex items-center gap-8">
@@ -864,28 +864,28 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <a href="https://borapassageiroxinguara.com.br" className="flex items-center gap-2">
             <img
               src="/assets/Logotipo.png"
               alt="Bora Passageiro"
-              className="h-8 w-auto brightness-0 invert opacity-60 hover:opacity-100 transition-opacity"
+              className="h-8 w-auto object-contain brightness-0 invert opacity-50"
             />
-          </Link>
+          </a>
 
           {/* Links */}
           <nav className="flex items-center gap-6 text-sm">
-            <Link
-              href="/"
-              className="text-white/40 hover:text-white transition-colors font-medium"
+            <a
+              href="https://borapassageiroxinguara.com.br"
+              className="text-slate-500 text-sm hover:text-emerald-400 transition-colors duration-300"
             >
               Início
-            </Link>
-            <Link
-              href="/ranking"
+            </a>
+            <a
+              href="https://ranking.borapassageiroxinguara.com.br"
               className="text-white/40 hover:text-white transition-colors font-medium"
             >
               Ranking
-            </Link>
+            </a>
             <a
               href="#ganhos"
               className="text-white/40 hover:text-white transition-colors font-medium"

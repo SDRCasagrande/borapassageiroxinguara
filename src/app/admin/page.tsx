@@ -146,9 +146,9 @@ export default async function AdminPage() {
             <p className="text-sm text-slate-500 mt-1">Visão geral em tempo real do ecossistema Bora Passageiro.</p>
           </div>
           <div className="flex gap-3">
-            <Link href="/ranking" className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl text-sm font-medium text-amber-700 hover:bg-amber-100 transition-all">
+            <a href="https://ranking.borapassageiroxinguara.com.br" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl text-sm font-medium text-amber-700 hover:bg-amber-100 transition-all">
               <Trophy className="w-4 h-4" /> Ver Ranking
-            </Link>
+            </a>
             <Link href="/motoristas" className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-all shadow-sm shadow-indigo-200">
               <Users className="w-4 h-4" /> Motoristas
             </Link>

@@ -29,7 +29,7 @@ export default function AdminLayout({
     { name: 'Rastreamento', href: '/tracking', icon: Link2 },
     { name: 'Motoristas', href: '/motoristas', icon: Users },
     { name: 'Pré-Cadastros', href: '/leads', icon: UserPlus },
-    { name: 'Ranking', href: '/ranking', icon: Trophy },
+    { name: 'Ranking', href: 'https://ranking.borapassageiroxinguara.com.br', icon: Trophy },
   ];
 
   return (
