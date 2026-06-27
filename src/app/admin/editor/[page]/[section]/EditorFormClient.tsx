@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { saveSiteContentAction } from '../actions';
+import { saveSiteContentAction } from '../../actions';
 import { Save, Plus, Trash2, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

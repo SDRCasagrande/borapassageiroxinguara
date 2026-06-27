@@ -172,10 +172,10 @@ function MotoristaHero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg sm:text-xl text-emerald-50/60 max-w-lg font-medium leading-relaxed"
           >
-            O Bora Passageiro cobra apenas{' '}
-            <span className="text-emerald-400 font-bold">10% de taxa fixa</span>.
-            Nada de surpresas. Quanto mais você roda, mais lucro de verdade fica
-            no seu bolso.
+            O Bora Passageiro tem planos com taxas justas a partir de{' '}
+            <span className="text-emerald-400 font-bold">10%</span>. Nada de
+            surpresas. Quanto mais você roda, mais lucro de verdade fica no
+            seu bolso.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -285,7 +285,7 @@ function MotoristaHero() {
               className="bg-[#1a2332]/90 backdrop-blur-xl border border-white/10 rounded-2xl px-5 py-3 shadow-2xl"
             >
               <p className="text-[11px] text-white/50 font-bold uppercase tracking-widest">Taxa Bora</p>
-              <p className="text-xl font-black text-emerald-400">Apenas 10%</p>
+              <p className="text-xl font-black text-emerald-400">A partir de 10%</p>
             </motion.div>
           </motion.div>
         </motion.div>
@@ -393,7 +393,7 @@ function FintechBalanceCard() {
                   </div>
                   <div>
                     <p className="text-white font-semibold text-sm">Taxa Bora</p>
-                    <p className="text-xs text-white/40">Apenas 10% do faturamento</p>
+                    <p className="text-xs text-white/40">Taxas justas a partir de 10%</p>
                   </div>
                 </div>
                 <span className="text-white/40 font-bold text-lg">- R$ 34,00</span>
@@ -477,8 +477,8 @@ function EarningsCalculator() {
             </span>
           </h2>
           <p className="mt-4 text-lg text-emerald-50/60 max-w-2xl mx-auto">
-            Sem taxas ocultas, sem letras miúdas. Calcule exatamente quanto vai
-            para o seu bolso com a nossa taxa fixa de 10%.
+            Sem taxas ocultas, sem letras miúdas. Simule os ganhos
+            com base em uma taxa de 10%.
           </p>
         </motion.div>
 
@@ -806,7 +806,7 @@ function TestimonialCTA() {
             >
               {[
                 { value: '90%', label: 'Fica com você' },
-                { value: '10%', label: 'Taxa fixa Bora' },
+                { value: 'A partir de 10%', label: 'Taxa Bora' },
                 { value: '0', label: 'Taxas escondidas' },
               ].map((stat, i) => (
                 <div
@@ -846,7 +846,7 @@ function TestimonialCTA() {
                 'Cadastro rápido e 100% online',
                 'Receba pagamentos toda semana',
                 'Suporte humano via WhatsApp',
-                'Sem surpresas — taxa única de 10%',
+                'Sem surpresas — taxas a partir de 10%',
               ].map((item, i) => (
                 <motion.div
                   key={i}
