@@ -149,7 +149,7 @@ export default async function AdminPage() {
             <Link href="/ranking" className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl text-sm font-medium text-amber-700 hover:bg-amber-100 transition-all">
               <Trophy className="w-4 h-4" /> Ver Ranking
             </Link>
-            <Link href="/admin/motoristas" className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-all shadow-sm shadow-indigo-200">
+            <Link href="/motoristas" className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-all shadow-sm shadow-indigo-200">
               <Users className="w-4 h-4" /> Motoristas
             </Link>
           </div>
@@ -254,7 +254,7 @@ export default async function AdminPage() {
                 <UserPlus className="w-5 h-5 text-violet-600" /> 
                 Pré-Cadastros Recentes
               </h2>
-              <Link href="/admin/leads" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
+              <Link href="/leads" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
                 Ver todos <ArrowUpRight className="w-3 h-3" />
               </Link>
             </div>

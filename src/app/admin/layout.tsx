@@ -25,10 +25,10 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { name: 'Rastreamento', href: '/admin/tracking', icon: Link2 },
-    { name: 'Motoristas', href: '/admin/motoristas', icon: Users },
-    { name: 'Pré-Cadastros', href: '/admin/leads', icon: UserPlus },
+    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Rastreamento', href: '/tracking', icon: Link2 },
+    { name: 'Motoristas', href: '/motoristas', icon: Users },
+    { name: 'Pré-Cadastros', href: '/leads', icon: UserPlus },
     { name: 'Ranking', href: '/ranking', icon: Trophy },
   ];
 
@@ -52,7 +52,7 @@ export default function AdminLayout({
       `}>
         {/* Logo Area */}
         <div className="py-6 px-6 border-b border-gray-100 flex items-center justify-between">
-          <Link href="/admin" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <img 
               src="/assets/Logotipo.png" 
               alt="Bora Passageiro" 
