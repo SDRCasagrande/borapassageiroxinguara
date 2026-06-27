@@ -40,33 +40,32 @@ export async function middleware(req: NextRequest) {
   if (hostname.startsWith('ranking.')) {
     if (!url.pathname.startsWith('/ranking')) {
       url.pathname = `/ranking${url.pathname === '/' ? '' : url.pathname}`;
+      isRewrite = true;
     }
-    isRewrite = true;
   } 
   // 2. Subdomínio MOTORISTA
   else if (hostname.startsWith('motorista.')) {
     if (!url.pathname.startsWith('/motorista')) {
       url.pathname = `/motorista${url.pathname === '/' ? '' : url.pathname}`;
+      isRewrite = true;
     }
-    isRewrite = true;
   } 
   // 3. Subdomínio PASSAGEIRO
   else if (hostname.startsWith('passageiro.')) {
     if (!url.pathname.startsWith('/passageiro')) {
       url.pathname = `/passageiro${url.pathname === '/' ? '' : url.pathname}`;
+      isRewrite = true;
     }
-    isRewrite = true;
   }
   // 4. Subdomínio ADMIN
   else if (hostname.startsWith('admin.')) {
-    // Se a rota for /login, não aplicamos a reescrita para /admin/login nem tratamos como rota protegida
     if (url.pathname !== '/login') {
       if (!url.pathname.startsWith('/admin')) {
         url.pathname = `/admin${url.pathname === '/' ? '' : url.pathname}`;
+        isRewrite = true;
       }
       isAdminRoute = true;
     }
-    isRewrite = true;
   }
 
   // Proteger APIs administrativas (motorista-lead admin actions, etc.)
