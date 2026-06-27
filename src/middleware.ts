@@ -25,9 +25,12 @@ export function middleware(req: NextRequest) {
   }
   // 4. Subdomínio ADMIN
   else if (hostname.startsWith('admin.')) {
-    url.pathname = `/admin${url.pathname === '/' ? '' : url.pathname}`;
+    // Se a rota for /login, não aplicamos a reescrita para /admin/login nem tratamos como rota protegida
+    if (url.pathname !== '/login') {
+      url.pathname = `/admin${url.pathname === '/' ? '' : url.pathname}`;
+      isAdminRoute = true;
+    }
     isRewrite = true;
-    isAdminRoute = true;
   }
 
   // PROTEÇÃO DO PAINEL ADMIN

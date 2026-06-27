@@ -20,7 +20,11 @@ export default function LoginPage() {
     const result = await loginAction(formData);
 
     if (result.success) {
-      router.push('/admin');
+      if (window.location.hostname.startsWith('admin.')) {
+        router.push('/');
+      } else {
+        router.push('/admin');
+      }
     } else {
       setError(result.error || 'Erro ao realizar login');
       setLoading(false);
