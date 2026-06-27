@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
-import { loginAction } from './actions';
+
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -17,17 +17,31 @@ export default function LoginPage() {
     setError('');
 
     const formData = new FormData(e.currentTarget);
-    const result = await loginAction(formData);
+    const email = formData.get('email');
+    const password = formData.get('password');
 
-    if (result.success) {
-      // Hard redirect para o middleware revalidar o cookie
-      if (window.location.hostname.startsWith('admin.')) {
-        window.location.href = '/';
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Hard redirect para o middleware revalidar o cookie
+        if (window.location.hostname.startsWith('admin.')) {
+          window.location.href = '/';
+        } else {
+          window.location.href = '/admin';
+        }
       } else {
-        window.location.href = '/admin';
+        setError(result.error || 'Erro ao realizar login');
+        setLoading(false);
       }
-    } else {
-      setError(result.error || 'Erro ao realizar login');
+    } catch (err) {
+      setError('Erro de conexão. Tente novamente.');
       setLoading(false);
     }
   }
