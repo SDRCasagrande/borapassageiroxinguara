@@ -5,6 +5,7 @@ import {
   Apple, MessageCircle, TrendingUp, UserPlus, Trophy, ArrowUpRight, Activity
 } from 'lucide-react';
 import Link from 'next/link';
+import { AdminCharts } from './components/AdminCharts';
 
 export default async function AdminPage() {
   // Links padrão do sistema
@@ -194,6 +195,20 @@ export default async function AdminPage() {
             </div>
           ))}
         </div>
+
+        {/* Admin Charts from Recharts */}
+        <AdminCharts 
+          clicksData={[
+            { name: 'Play Store', cliques: clicksBySlug.playstore || 0, color: '#10b981' },
+            { name: 'App Store', cliques: clicksBySlug.appstore || 0, color: '#334155' },
+            { name: 'WhatsApp', cliques: clicksBySlug.whatsapp || 0, color: '#22c55e' }
+          ]}
+          pageViewsData={[
+            { name: 'Passageiro', visitas: pageViews.passageiro || 0, color: '#3b82f6' },
+            { name: 'Motorista', visitas: pageViews.motorista || 0, color: '#10b981' },
+            { name: 'Ranking', visitas: pageViews.ranking || 0, color: '#f59e0b' }
+          ]}
+        />
 
         {/* Two Column: Page Views + Recent Leads */}
         <div className="grid lg:grid-cols-2 gap-6 mb-8">

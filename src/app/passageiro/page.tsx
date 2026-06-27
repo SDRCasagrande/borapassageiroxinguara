@@ -497,7 +497,10 @@ function ComoFunciona() {
   );
 }
 
-/* ─── DOWNLOAD CTA SECTION ────────────────────────────── */
+import { Testimonials } from './components/Testimonials';
+import { FAQ } from './components/FAQ';
+
+/* ─── DOWNLOAD CTA ────────────────────────────────────── */
 function DownloadCTA() {
   return (
     <section
@@ -784,6 +787,8 @@ export default function PassageiroPage() {
         <StatsCounter />
         <BentoGridFeatures />
         <ComoFunciona />
+        <Testimonials />
+        <FAQ />
         <DownloadCTA />
       </main>
 

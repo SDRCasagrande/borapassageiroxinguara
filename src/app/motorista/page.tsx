@@ -940,6 +940,9 @@ function FloatingWhatsApp() {
   );
 }
 
+import { Testimonials } from './components/Testimonials';
+import { FAQ } from './components/FAQ';
+
 /* ═══════════════════════════════════════════════════════════
    PAGE EXPORT
    ═══════════════════════════════════════════════════════════ */
@@ -957,7 +960,10 @@ export default function MotoristaPage() {
         <EarningsCalculator />
         {/* 5. Requisitos */}
         <RequisitosSection />
-        {/* 6. Depoimentos / CTA */}
+        {/* 6. Depoimentos e FAQ */}
+        <Testimonials />
+        <FAQ />
+        {/* 7. CTA Final */}
         <TestimonialCTA />
       </main>
 
