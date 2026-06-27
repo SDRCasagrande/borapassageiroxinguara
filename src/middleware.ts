@@ -20,6 +20,11 @@ export function middleware(req: NextRequest) {
     url.pathname = `/passageiro${url.pathname === '/' ? '' : url.pathname}`;
     return NextResponse.rewrite(url);
   }
+  // 4. Subdomínio ADMIN
+  else if (hostname.startsWith('admin.')) {
+    url.pathname = `/admin${url.pathname === '/' ? '' : url.pathname}`;
+    return NextResponse.rewrite(url);
+  }
 
   return NextResponse.next();
 }
