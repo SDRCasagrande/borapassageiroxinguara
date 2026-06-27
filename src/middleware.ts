@@ -1,12 +1,40 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { jwtVerify } from 'jose';
 
-export function middleware(req: NextRequest) {
+const COOKIE_NAME = 'admin_token';
+
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    return new TextEncoder().encode('bora-passageiro-dev-secret-change-in-production');
+  }
+  return new TextEncoder().encode(secret);
+}
+
+/**
+ * Verifica o JWT no middleware (Edge Runtime).
+ * Retorna true se o token é válido e não expirou.
+ */
+async function isAuthenticated(req: NextRequest): Promise<boolean> {
+  const token = req.cookies.get(COOKIE_NAME)?.value;
+  if (!token) return false;
+
+  try {
+    await jwtVerify(token, getJwtSecret(), { issuer: 'bora-passageiro' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const hostname = req.headers.get('host') || '';
 
   let isRewrite = false;
   let isAdminRoute = url.pathname.startsWith('/admin');
+  let isApiProtected = false;
 
   // 1. Subdomínio RANKING (Gamificação)
   if (hostname.startsWith('ranking.')) {
@@ -35,14 +63,24 @@ export function middleware(req: NextRequest) {
     isRewrite = true;
   }
 
-  // PROTEÇÃO DO PAINEL ADMIN
-  if (isAdminRoute) {
-    const adminToken = req.cookies.get('admin_token')?.value;
+  // Proteger APIs administrativas (seed, motorista-lead admin actions, etc.)
+  if (url.pathname.startsWith('/api/seed')) {
+    isApiProtected = true;
+  }
+
+  // PROTEÇÃO DO PAINEL ADMIN — Valida JWT
+  if (isAdminRoute || isApiProtected) {
+    const authenticated = await isAuthenticated(req);
     
-    // Se não tem o cookie ou não é válido, redireciona para o login
-    if (adminToken !== 'authenticated') {
-      // Se já estamos no admin. dominio, manda pra /login nele mesmo,
-      // Se for /admin normal, manda pra /login normal.
+    if (!authenticated) {
+      if (isApiProtected) {
+        // Retorna 401 para APIs protegidas
+        return NextResponse.json(
+          { error: 'Não autorizado. Faça login primeiro.' }, 
+          { status: 401 }
+        );
+      }
+      // Redireciona para login
       const loginUrl = new URL('/login', req.url);
       return NextResponse.redirect(loginUrl);
     }
@@ -53,6 +91,6 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|assets).*)',
+    '/((?!api/logout|_next/static|_next/image|favicon.ico|assets).*)',
   ],
 };
