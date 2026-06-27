@@ -4,8 +4,8 @@ import { PrismaPg } from '@prisma/adapter-pg';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-// No Prisma 7, conexões diretas via postgres precisam do adapter
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const connectionString = process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/postgres";
+const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 
 export const prisma =
