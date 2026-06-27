@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient({
-  accelerateUrl: process.env.DATABASE_URL,
-});
+import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
