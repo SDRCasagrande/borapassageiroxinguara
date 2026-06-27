@@ -97,6 +97,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api/logout|_next/static|_next/image|favicon.ico|assets).*)',
+    '/((?!api/logout|api/motorista-lead|_next/static|_next/image|favicon.ico|assets).*)',
   ],
 };

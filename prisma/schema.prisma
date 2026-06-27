@@ -94,3 +94,13 @@ model PageView {
   ipAddress String?
   createdAt DateTime @default(now())
 }
+
+model SiteContent {
+  id        String   @id @default(uuid())
+  page      String   // "passageiro" | "motorista"
+  section   String   // "hero" | "stats" | "features" | "steps" | "testimonials" | "faq" | "cta" | "footer" | "config" | etc.
+  data      Json     // Conteúdo da seção como JSON
+  updatedAt DateTime @updatedAt
+
+  @@unique([page, section])
+}

@@ -13,7 +13,9 @@ export async function loginAction(formData: FormData) {
   // Delay para evitar brute force
   await new Promise(resolve => setTimeout(resolve, 800));
 
-  if (validateCredentials(email, password)) {
+  const isValid = await validateCredentials(email, password);
+
+  if (isValid) {
     const token = await generateToken({ email, role: 'admin' });
     
     const cookieStore = await cookies();

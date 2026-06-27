@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { seedAdminUser } from '@/lib/auth';
 
 // Rota de seed — acesse /api/seed no navegador para popular os motoristas
 async function seedMotoristas() {
+  await seedAdminUser();
+
   const motoristas = [
     { nome: "Leandro Bernardes", corridasMes: 469, status: "ativo" },
     { nome: "Eliesio Lima Lustosa", corridasMes: 291, status: "ativo" },

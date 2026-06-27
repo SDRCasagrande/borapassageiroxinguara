@@ -1,12 +1,13 @@
 import { SignJWT, jwtVerify } from 'jose';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
 
 /**
  * Biblioteca de autenticação JWT para o painel admin.
  * 
- * Variáveis de ambiente necessárias:
- * - JWT_SECRET: Chave secreta para assinar/verificar tokens JWT (OBRIGATÓRIO em produção)
- * - ADMIN_USER: Email do admin (fallback: admin@borapassageiroxinguara.com.br)
- * - ADMIN_PASSWORD: Senha do admin (fallback: bolacha123)
+ * Credenciais armazenadas no PostgreSQL (tabela AdminUser) com senha bcrypt.
+ * Variável de ambiente necessária:
+ * - JWT_SECRET: Chave secreta para assinar/verificar tokens JWT
  */
 
 const COOKIE_NAME = 'admin_token';
@@ -15,7 +16,7 @@ const TOKEN_EXPIRY = '7d'; // 7 dias
 function getJwtSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
-    console.warn('[auth] JWT_SECRET não configurado! Usando fallback inseguro. Defina JWT_SECRET no ambiente de produção.');
+    console.warn('[auth] JWT_SECRET não configurado! Usando fallback inseguro.');
     return new TextEncoder().encode('bora-passageiro-dev-secret-change-in-production');
   }
   return new TextEncoder().encode(secret);
@@ -53,17 +54,42 @@ export async function verifyToken(token: string): Promise<{ email: string; role:
 }
 
 /**
- * Valida as credenciais do admin
+ * Valida credenciais contra o banco de dados (AdminUser).
+ * Senha verificada com bcrypt.
  */
-export function validateCredentials(email: string, password: string): boolean {
-  const validUser = process.env.ADMIN_USER || 'admin@borapassageiroxinguara.com.br';
-  const validPwd = process.env.ADMIN_PASSWORD || 'bolacha123';
-  
-  if (!process.env.ADMIN_USER || !process.env.ADMIN_PASSWORD) {
-    console.warn('[auth] ADMIN_USER e/ou ADMIN_PASSWORD não configurados. Usando credenciais padrão inseguras.');
-  }
+export async function validateCredentials(email: string, password: string): Promise<boolean> {
+  try {
+    const user = await prisma.adminUser.findUnique({
+      where: { email, ativo: true },
+    });
 
-  return email === validUser && password === validPwd;
+    if (!user) return false;
+
+    return bcrypt.compareSync(password, user.password);
+  } catch (error) {
+    console.error('[auth] Erro ao validar credenciais:', error);
+    return false;
+  }
+}
+
+/**
+ * Cria o admin padrão se nenhum existe no banco.
+ * Chamado pelo seed.
+ */
+export async function seedAdminUser() {
+  const count = await prisma.adminUser.count();
+  if (count === 0) {
+    const hashedPassword = bcrypt.hashSync('bolacha123', 12);
+    await prisma.adminUser.create({
+      data: {
+        email: 'admin@borapassageiroxinguara.com.br',
+        password: hashedPassword,
+        nome: 'Administrador',
+        ativo: true,
+      },
+    });
+    console.log('[auth] Admin padrão criado: admin@borapassageiroxinguara.com.br');
+  }
 }
 
 export { COOKIE_NAME };
