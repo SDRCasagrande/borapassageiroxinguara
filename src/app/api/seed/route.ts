@@ -65,10 +65,30 @@ async function seedMotoristas() {
       }
     }
 
+    const links = [
+      { slug: 'playstore', destino: 'https://play.google.com/store/apps/details?id=br.com.client.borapassageiro' },
+      { slug: 'appstore', destino: 'https://apps.apple.com/br/app/idSEU_APP_ID' },
+      { slug: 'whatsapp', destino: 'https://wa.me/55XXXXXXXXXXX' }
+    ];
+
+    let linksCreated = 0;
+    for (const link of links) {
+      const existe = await prisma.trackingLink.findUnique({ where: { slug: link.slug } });
+      if (!existe) {
+        await prisma.trackingLink.create({
+          data: {
+            slug: link.slug,
+            destino: link.destino,
+          }
+        });
+        linksCreated++;
+      }
+    }
+
     return NextResponse.json({
       success: true,
-      message: `Seed concluído! ${created} criados, ${skipped} atualizados.`,
-      total: motoristas.length,
+      message: `Seed concluído! ${created} motoristas criados, ${skipped} atualizados. ${linksCreated} links criados.`,
+      totalMotoristas: motoristas.length,
     });
   } catch (error: any) {
     console.error("Erro no seed:", error);
