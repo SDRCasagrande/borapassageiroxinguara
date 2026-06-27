@@ -59,7 +59,7 @@ export async function middleware(req: NextRequest) {
   }
   // 4. Subdomínio ADMIN
   else if (hostname.startsWith('admin.')) {
-    if (url.pathname !== '/login') {
+    if (url.pathname !== '/login' && !url.pathname.startsWith('/api/')) {
       if (!url.pathname.startsWith('/admin')) {
         url.pathname = `/admin${url.pathname === '/' ? '' : url.pathname}`;
         isRewrite = true;
