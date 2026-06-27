@@ -73,8 +73,8 @@ export function MotoristasAdminClient({
                 <input name="nome" required placeholder="Ex.: Carlos Silva" maxLength={40} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" />
               </div>
               <div className="flex-1 w-full">
-                <label className="text-xs font-semibold text-slate-500 mb-1 block">URL da Foto (Opcional)</label>
-                <input name="fotoUrl" placeholder="https://..." type="url" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" />
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">Foto (Opcional)</label>
+                <input name="foto" type="file" accept="image/*" className="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none bg-white" />
               </div>
               <div className="w-full sm:w-40">
                 <label className="text-xs font-semibold text-slate-500 mb-1 block">Etiqueta</label>
@@ -125,8 +125,8 @@ export function MotoristasAdminClient({
                               <input name="nome" defaultValue={m.nome} required className="w-full border border-indigo-200 rounded-lg px-3 py-1.5 text-sm" />
                             </div>
                             <div className="flex-1">
-                              <label className="text-xs font-semibold text-slate-500 mb-1 block">URL da Foto</label>
-                              <input name="fotoUrl" defaultValue={m.fotoUrl || ""} type="url" className="w-full border border-indigo-200 rounded-lg px-3 py-1.5 text-sm" />
+                              <label className="text-xs font-semibold text-slate-500 mb-1 block">Nova Foto</label>
+                              <input name="foto" type="file" accept="image/*" className="w-full border border-indigo-200 rounded-lg px-3 py-1 text-sm bg-white" />
                             </div>
                             <div>
                               <label className="text-xs font-semibold text-slate-500 mb-1 block">Status</label>

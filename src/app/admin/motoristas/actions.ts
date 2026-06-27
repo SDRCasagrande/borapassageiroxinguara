@@ -4,19 +4,32 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 // ──────────────────────────────────────────
+// PROCESSAR FOTO EM BASE64
+// ──────────────────────────────────────────
+async function processarFoto(file: File | null): Promise<string | null> {
+  if (!file || file.size === 0) return null;
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  const base64 = buffer.toString('base64');
+  return `data:${file.type};base64,${base64}`;
+}
+
+// ──────────────────────────────────────────
 // CADASTRAR MOTORISTA
 // ──────────────────────────────────────────
 export async function cadastrarMotorista(formData: FormData) {
   const nome = formData.get('nome') as string;
   const status = formData.get('status') as string || 'ativo';
-  const fotoUrl = formData.get('fotoUrl') as string || null;
+  const fotoFile = formData.get('foto') as File | null;
 
   if (!nome || nome.trim() === '') throw new Error('Nome é obrigatório');
+
+  const fotoUrl = await processarFoto(fotoFile);
 
   await prisma.motorista.create({
     data: {
       nome: nome.trim(),
-      fotoUrl: fotoUrl ? fotoUrl.trim() : null,
+      fotoUrl: fotoUrl,
       status: status === 'alerta' ? 'alerta' : 'ativo',
       ativo: true,
       corridasMes: 0,
@@ -133,16 +146,18 @@ export async function atualizarMotorista(formData: FormData) {
   const id = formData.get('id') as string;
   const nome = formData.get('nome') as string;
   const status = formData.get('status') as string;
-  const fotoUrl = formData.get('fotoUrl') as string;
+  const fotoFile = formData.get('foto') as File | null;
 
   if (!id || !nome || nome.trim() === '') throw new Error('Nome é obrigatório');
+
+  const novaFotoUrl = await processarFoto(fotoFile);
 
   await prisma.motorista.update({
     where: { id },
     data: {
       nome: nome.trim(),
       status: status === 'alerta' ? 'alerta' : 'ativo',
-      fotoUrl: fotoUrl ? fotoUrl.trim() : null,
+      ...(novaFotoUrl && { fotoUrl: novaFotoUrl }),
     }
   });
 
