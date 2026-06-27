@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { uploadToR2, deleteFromR2, isR2Configured } from "@/lib/r2";
 
 // ──────────────────────────────────────────
@@ -40,18 +41,13 @@ async function processarFoto(file: File | null): Promise<string | null> {
 // ──────────────────────────────────────────
 export async function cadastrarMotorista(formData: FormData) {
   const nome = formData.get('nome') as string;
-  const status = formData.get('status') as string || 'ativo';
-  const fotoFile = formData.get('foto') as File | null;
-
+  
   if (!nome || nome.trim() === '') throw new Error('Nome é obrigatório');
 
-  const fotoUrl = await processarFoto(fotoFile);
-
-  await prisma.motorista.create({
+  const novoMotorista = await prisma.motorista.create({
     data: {
       nome: nome.trim(),
-      fotoUrl: fotoUrl,
-      status: status === 'alerta' ? 'alerta' : 'ativo',
+      status: 'ativo',
       ativo: true,
       corridasMes: 0,
       pontos: 0,
@@ -60,6 +56,8 @@ export async function cadastrarMotorista(formData: FormData) {
 
   revalidatePath('/admin/motoristas');
   revalidatePath('/ranking');
+  
+  redirect(`/admin/motoristas/${novoMotorista.id}`);
 }
 
 // ──────────────────────────────────────────
@@ -203,6 +201,11 @@ export async function atualizarMotorista(formData: FormData) {
   const id = formData.get('id') as string;
   const nome = formData.get('nome') as string;
   const status = formData.get('status') as string;
+  const telefone = formData.get('telefone') as string | null;
+  const cnh = formData.get('cnh') as string | null;
+  const veiculo = formData.get('veiculo') as string | null;
+  const cidade = formData.get('cidade') as string | null;
+  
   const fotoFile = formData.get('foto') as File | null;
 
   if (!id || !nome || nome.trim() === '') throw new Error('Nome é obrigatório');
@@ -222,10 +225,15 @@ export async function atualizarMotorista(formData: FormData) {
     data: {
       nome: nome.trim(),
       status: status === 'alerta' ? 'alerta' : 'ativo',
+      ...(telefone && { telefone: telefone.trim() }),
+      ...(cnh && { cnh: cnh.trim() }),
+      ...(veiculo && { veiculo: veiculo.trim() }),
+      ...(cidade && { cidade: cidade.trim() }),
       ...(novaFotoUrl && { fotoUrl: novaFotoUrl }),
     }
   });
 
   revalidatePath('/admin/motoristas');
   revalidatePath('/ranking');
+  revalidatePath(`/admin/motoristas/${id}`);
 }

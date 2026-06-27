@@ -25,6 +25,9 @@ model Motorista {
   id          String   @id @default(uuid())
   nome        String
   telefone    String?
+  veiculo     String?
+  cnh         String?
+  cidade      String?
   fotoUrl     String?
   ativo       Boolean  @default(true)
   status      String   @default("ativo") // ativo, alerta

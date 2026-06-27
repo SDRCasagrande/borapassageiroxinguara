@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { MotoristaProfileClient } from "./MotoristaProfileClient";
-import { adicionarCorridasProfile } from "../actions";
+import { adicionarCorridasProfile, atualizarMotorista } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +25,7 @@ export default async function MotoristaProfilePage(props: { params: Promise<{ id
     <MotoristaProfileClient 
       motorista={motorista} 
       adicionarCorridas={adicionarCorridasProfile}
+      atualizarMotorista={atualizarMotorista}
     />
   );
 }
