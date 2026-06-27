@@ -172,10 +172,8 @@ function MotoristaHero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg sm:text-xl text-emerald-50/60 max-w-lg font-medium leading-relaxed"
           >
-            O Bora Passageiro tem planos com taxas justas a partir de{' '}
-            <span className="text-emerald-400 font-bold">10%</span>. Nada de
-            surpresas. Quanto mais você roda, mais lucro de verdade fica no
-            seu bolso.
+            No Bora Passageiro você tem planos com taxas justas e fica com até{' '}
+            <span className="text-emerald-400 font-bold">90% do valor da corrida</span>! Nossa taxa padrão é de 25% e você pode melhorar seus lucros.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -284,8 +282,8 @@ function MotoristaHero() {
               transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
               className="bg-[#1a2332]/90 backdrop-blur-xl border border-white/10 rounded-2xl px-5 py-3 shadow-2xl"
             >
-              <p className="text-[11px] text-white/50 font-bold uppercase tracking-widest">Taxa Bora</p>
-              <p className="text-xl font-black text-emerald-400">A partir de 10%</p>
+              <p className="text-[11px] text-white/50 font-bold uppercase tracking-widest">Fica com você</p>
+              <p className="text-xl font-black text-emerald-400">Até 90%</p>
             </motion.div>
           </motion.div>
         </motion.div>
@@ -393,10 +391,10 @@ function FintechBalanceCard() {
                   </div>
                   <div>
                     <p className="text-white font-semibold text-sm">Taxa Bora</p>
-                    <p className="text-xs text-white/40">Taxas justas a partir de 10%</p>
+                    <p className="text-xs text-white/40">Taxa padrão de 25% do faturamento</p>
                   </div>
                 </div>
-                <span className="text-white/40 font-bold text-lg">- R$ 34,00</span>
+                <span className="text-white/40 font-bold text-lg">- R$ 85,00</span>
               </motion.div>
 
               {/* Líquido */}
@@ -415,7 +413,7 @@ function FintechBalanceCard() {
                     <p className="text-xs text-emerald-400/60">Seu dinheiro de verdade</p>
                   </div>
                 </div>
-                <span className="text-emerald-400 font-black text-xl">R$ 306,00</span>
+                <span className="text-emerald-400 font-black text-xl">R$ 255,00</span>
               </motion.div>
             </div>
 
@@ -446,7 +444,7 @@ function EarningsCalculator() {
   const [rides, setRides] = useState(15);
   const averageTicket = 15;
   const totalGross = rides * averageTicket;
-  const boraFee = totalGross * 0.1;
+  const boraFee = totalGross * 0.25;
   const netDay = totalGross - boraFee;
   const netMonth = netDay * 25;
 
@@ -478,7 +476,7 @@ function EarningsCalculator() {
           </h2>
           <p className="mt-4 text-lg text-emerald-50/60 max-w-2xl mx-auto">
             Sem taxas ocultas, sem letras miúdas. Simule os ganhos
-            com base em uma taxa de 10%.
+            com base na nossa taxa padrão de 25%.
           </p>
         </motion.div>
 
@@ -578,7 +576,7 @@ function EarningsCalculator() {
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-white/50">Taxa Bora (10%)</span>
+                  <span className="text-white/50">Taxa Bora (25%)</span>
                   <span className="text-rose-400 font-medium tabular-nums">
                     - R${' '}
                     {boraFee.toLocaleString('pt-BR', {
@@ -603,12 +601,12 @@ function EarningsCalculator() {
               <div className="space-y-2">
                 <div className="flex justify-between text-xs text-white/30">
                   <span>Seu lucro vs taxa</span>
-                  <span>90% é seu</span>
+                  <span>75% é seu</span>
                 </div>
                 <div className="w-full h-3 bg-black/40 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={isInView ? { width: '90%' } : {}}
+                    animate={isInView ? { width: '75%' } : {}}
                     transition={{ duration: 1.2, delay: 0.6, ease: 'easeOut' }}
                     className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
                   />
@@ -763,10 +761,9 @@ function TestimonialCTA() {
               <div className="text-6xl text-emerald-500/20 font-serif leading-none mb-4">&ldquo;</div>
 
               <p className="text-white/80 text-lg sm:text-xl leading-relaxed font-medium mb-8">
-                Eu rodava em outro app e ficava com menos de 70% do faturamento. No Bora, fico com{' '}
-                <span className="text-emerald-400 font-bold">90% de tudo</span>. Minha renda
-                aumentou sem precisar trabalhar mais horas. É o app que realmente valoriza o
-                motorista.
+                Eu rodava em outro app e pagava taxas abusivas que consumiam meu faturamento. No Bora,{' '}
+                <span className="text-emerald-400 font-bold">tenho a parceria mais justa</span> do mercado. Minha renda
+                aumentou sem precisar trabalhar mais horas. É o app que realmente valoriza o motorista.
               </p>
 
               <div className="flex items-center gap-4">
