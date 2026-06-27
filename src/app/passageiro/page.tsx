@@ -13,11 +13,13 @@ import {
   Globe,
   Users,
   MessageCircle,
+  Menu,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ActionButtons } from '@/components/ActionButtons';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 /* ─── ANIMATION VARIANTS ──────────────────────────────── */
 const fadeUp = {
@@ -40,6 +42,13 @@ const scaleIn = {
 
 /* ─── PREMIUM HEADER ──────────────────────────────────── */
 function PremiumHeader() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navLinks = [
+    { href: '#vantagens', label: 'Vantagens' },
+    { href: '#como-funciona', label: 'Como Funciona' },
+    { href: '#download', label: 'Download' },
+  ];
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-2xl border-b border-white/[0.06] text-white transition-all duration-500">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
@@ -52,11 +61,7 @@ function PremiumHeader() {
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
-          {[
-            { href: '#vantagens', label: 'Vantagens' },
-            { href: '#como-funciona', label: 'Como Funciona' },
-            { href: '#download', label: 'Download' },
-          ].map((link) => (
+          {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -69,11 +74,45 @@ function PremiumHeader() {
 
         <a
           href="/go/playstore"
-          className="text-sm font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-2.5 rounded-full hover:scale-105 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-300"
+          className="hidden md:inline-block text-sm font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-2.5 rounded-full hover:scale-105 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all duration-300"
         >
           Baixar App
         </a>
+
+        {/* Hamburger Mobile */}
+        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden p-2 text-white/80 hover:text-white transition-colors" aria-label="Menu">
+          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
+
+      {/* Mobile Drawer */}
+      {menuOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          className="md:hidden bg-black/90 backdrop-blur-xl border-t border-white/5"
+        >
+          <nav className="flex flex-col px-6 py-4 gap-3">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-sm font-medium text-white/70 hover:text-white py-2 transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href="/go/playstore"
+              className="text-sm font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-full text-center mt-2"
+            >
+              Baixar App
+            </a>
+          </nav>
+        </motion.div>
+      )}
     </header>
   );
 }
@@ -683,19 +722,13 @@ function Footer() {
               {[
                 {
                   icon: Globe,
-                  href: '#',
+                  href: 'https://www.instagram.com/bora.passageiroxinguara/',
                   label: 'Instagram',
                   hoverColor: 'hover:bg-pink-500/20 hover:text-pink-400 hover:border-pink-500/30',
                 },
                 {
-                  icon: Users,
-                  href: '#',
-                  label: 'Facebook',
-                  hoverColor: 'hover:bg-blue-500/20 hover:text-blue-400 hover:border-blue-500/30',
-                },
-                {
                   icon: MessageCircle,
-                  href: '/go/whatsapp',
+                  href: 'https://wa.me/5594992777717',
                   label: 'WhatsApp',
                   hoverColor:
                     'hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30',
@@ -751,7 +784,7 @@ function Footer() {
 function FloatingWhatsApp() {
   return (
     <motion.a
-      href="/go/whatsapp"
+      href="https://wa.me/5594992777717"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Fale pelo WhatsApp"

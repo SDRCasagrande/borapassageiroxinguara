@@ -1,34 +1,55 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { User, Phone, MapPin, Car, CheckCircle2, ArrowLeft, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { User, Phone, MapPin, Car, CheckCircle2, ArrowLeft, Loader2, MessageCircle, AlertTriangle, X } from 'lucide-react';
 import Link from 'next/link';
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 2) return digits.length ? `(${digits}` : '';
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
 
 export default function CadastroMotoristaPage() {
   const [form, setForm] = useState({ nome: '', telefone: '', cidade: '', veiculo: '' });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: 'error' | 'info' }>({ show: false, message: '', type: 'error' });
+
+  const showToast = (message: string, type: 'error' | 'info' = 'error') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast(t => ({ ...t, show: false })), 4000);
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, telefone: formatPhone(e.target.value) });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.nome || !form.telefone) return;
+    const digits = form.telefone.replace(/\D/g, '');
+    if (!form.nome || digits.length < 10) {
+      showToast(digits.length < 10 ? 'Digite um telefone válido com DDD.' : 'Preencha todos os campos obrigatórios.');
+      return;
+    }
 
     setLoading(true);
     try {
       const res = await fetch('/api/motorista-lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, telefone: form.telefone.replace(/\D/g, '') }),
       });
 
       if (res.ok) {
         setSuccess(true);
       } else {
-        alert('Erro ao enviar. Tente novamente.');
+        showToast('Erro ao enviar. Tente novamente.');
       }
     } catch {
-      alert('Falha na conexão. Verifique sua internet.');
+      showToast('Falha na conexão. Verifique sua internet.');
     } finally {
       setLoading(false);
     }
@@ -46,22 +67,55 @@ export default function CadastroMotoristaPage() {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring' }}
-            className="w-24 h-24 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto"
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 12 }}
+            className="w-28 h-28 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto ring-4 ring-emerald-500/10"
           >
-            <CheckCircle2 className="w-12 h-12 text-emerald-400" />
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.4, type: 'spring', stiffness: 300 }}
+            >
+              <CheckCircle2 className="w-14 h-14 text-emerald-400" />
+            </motion.div>
           </motion.div>
-          <h1 className="text-3xl font-black text-white">Cadastro Enviado!</h1>
-          <p className="text-white/60 text-lg">
+          <motion.h1 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="text-3xl font-black text-white"
+          >
+            Cadastro Enviado! 🎉
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-white/60 text-lg"
+          >
             Recebemos seu pré-cadastro, <span className="text-emerald-400 font-bold">{form.nome.split(' ')[0]}</span>! 
             Nossa equipe entrará em contato pelo WhatsApp para finalizar o processo.
-          </p>
-          <Link
-            href="/motorista"
-            className="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 px-6 rounded-xl transition-all"
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="flex flex-col sm:flex-row gap-3 justify-center"
           >
-            <ArrowLeft className="w-5 h-5" /> Voltar ao Site
-          </Link>
+            <a
+              href={`https://wa.me/5594992777717?text=${encodeURIComponent(`Olá! Sou ${form.nome.split(' ')[0]}, acabei de fazer meu pré-cadastro como motorista no Bora Passageiro!`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-emerald-500/20"
+            >
+              <MessageCircle className="w-5 h-5" /> Falar no WhatsApp
+            </a>
+            <Link
+              href="/motorista"
+              className="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 px-6 rounded-xl transition-all"
+            >
+              <ArrowLeft className="w-5 h-5" /> Voltar ao Site
+            </Link>
+          </motion.div>
         </motion.div>
       </div>
     );
@@ -71,6 +125,30 @@ export default function CadastroMotoristaPage() {
     <div className="min-h-screen bg-[#030712] flex items-center justify-center px-4 py-20 relative overflow-hidden">
       {/* Background effects */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[60vw] bg-emerald-600/5 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast.show && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: -20, x: '-50%' }}
+            className="fixed top-6 left-1/2 z-50 max-w-sm w-full"
+          >
+            <div className={`flex items-center gap-3 px-5 py-3.5 rounded-xl border shadow-xl backdrop-blur-xl ${
+              toast.type === 'error' 
+                ? 'bg-rose-900/80 border-rose-500/30 text-rose-100' 
+                : 'bg-emerald-900/80 border-emerald-500/30 text-emerald-100'
+            }`}>
+              <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+              <span className="text-sm font-medium flex-1">{toast.message}</span>
+              <button onClick={() => setToast(t => ({ ...t, show: false }))} className="text-white/40 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -117,7 +195,8 @@ export default function CadastroMotoristaPage() {
                 type="tel"
                 placeholder="(94) 99999-0000"
                 value={form.telefone}
-                onChange={(e) => setForm({ ...form, telefone: e.target.value })}
+                onChange={handlePhoneChange}
+                maxLength={15}
                 required
                 className="bg-transparent outline-none w-full text-white placeholder:text-white/30"
               />

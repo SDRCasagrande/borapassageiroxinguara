@@ -17,6 +17,8 @@ import {
   Zap,
   Users,
   MessageCircle,
+  Menu,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -25,10 +27,15 @@ import Image from 'next/image';
    1. PREMIUM HEADER MOTORISTA
    ═══════════════════════════════════════════════════════════ */
 function PremiumHeaderMotorista() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navLinks = [
+    { href: '#ganhos', label: 'Ganhos' },
+    { href: '#requisitos', label: 'Requisitos' },
+  ];
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0f18]/80 backdrop-blur-xl border-b border-white/5 text-white transition-all duration-300">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-        {/* Logo */}
         <a href="https://borapassageiroxinguara.com.br" className="flex items-center gap-2 group">
           <img
             src="/assets/Logotipo.png"
@@ -37,30 +44,58 @@ function PremiumHeaderMotorista() {
           />
         </a>
 
-        {/* Nav Links */}
         <nav className="hidden md:flex items-center gap-8">
-          <a
-            href="#ganhos"
-            className="text-sm font-medium text-white/70 hover:text-white transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-400 after:transition-all hover:after:w-full"
-          >
-            Ganhos
-          </a>
-          <a
-            href="#requisitos"
-            className="text-sm font-medium text-white/70 hover:text-white transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-400 after:transition-all hover:after:w-full"
-          >
-            Requisitos
-          </a>
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-white/70 hover:text-white transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-400 after:transition-all hover:after:w-full"
+            >
+              {link.label}
+            </a>
+          ))}
         </nav>
 
-        {/* CTA */}
         <Link
           href="/motorista/cadastro"
-          className="text-sm font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-5 py-2.5 rounded-full hover:scale-105 hover:shadow-emerald-500/40 transition-all duration-300 shadow-lg shadow-emerald-500/20"
+          className="hidden md:inline-block text-sm font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-5 py-2.5 rounded-full hover:scale-105 hover:shadow-emerald-500/40 transition-all duration-300 shadow-lg shadow-emerald-500/20"
         >
           Cadastre-se Já
         </Link>
+
+        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden p-2 text-white/80 hover:text-white transition-colors" aria-label="Menu">
+          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
+
+      {menuOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          className="md:hidden bg-[#0a0f18]/95 backdrop-blur-xl border-t border-white/5"
+        >
+          <nav className="flex flex-col px-6 py-4 gap-3">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-sm font-medium text-white/70 hover:text-white py-2 transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+            <Link
+              href="/motorista/cadastro"
+              onClick={() => setMenuOpen(false)}
+              className="text-sm font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-full text-center mt-2"
+            >
+              Cadastre-se Já
+            </Link>
+          </nav>
+        </motion.div>
+      )}
     </header>
   );
 }
@@ -838,7 +873,7 @@ function TestimonialCTA() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <a
-                href="/go/whatsapp"
+                href="https://wa.me/5594992777717"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-[#121a28] hover:bg-[#1a2332] text-white px-8 py-4 rounded-xl border border-white/10 hover:border-emerald-500/20 transition-all duration-300 font-bold group"
@@ -916,7 +951,7 @@ function Footer() {
 function FloatingWhatsApp() {
   return (
     <motion.a
-      href="/go/whatsapp"
+      href="https://wa.me/5594992777717"
       target="_blank"
       rel="noopener noreferrer"
       initial={{ scale: 0, opacity: 0 }}

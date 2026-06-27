@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, Loader2, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { loginAction } from './actions';
 
 export default function LoginPage() {
@@ -20,10 +20,11 @@ export default function LoginPage() {
     const result = await loginAction(formData);
 
     if (result.success) {
+      // Hard redirect para o middleware revalidar o cookie
       if (window.location.hostname.startsWith('admin.')) {
-        router.push('/');
+        window.location.href = '/';
       } else {
-        router.push('/admin');
+        window.location.href = '/admin';
       }
     } else {
       setError(result.error || 'Erro ao realizar login');
@@ -55,12 +56,12 @@ export default function LoginPage() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-500/30"
+              className="mx-auto mb-6"
             >
-              <ShieldCheck className="w-8 h-8 text-white" />
+              <img src="/assets/Logotipo.png" alt="Bora Passageiro" className="h-20 w-auto brightness-0 invert drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]" />
             </motion.div>
-            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Bem-vindo de volta</h1>
-            <p className="text-slate-400 text-sm">Faça login para acessar o painel de controle</p>
+            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Bora Passageiro</h1>
+            <p className="text-slate-400 text-sm">Acesse o painel administrativo</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

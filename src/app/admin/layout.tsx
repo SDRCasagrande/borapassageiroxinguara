@@ -106,8 +106,13 @@ export default function AdminLayout({
         <div className="p-4 border-t border-gray-100">
           <button 
             onClick={async () => {
-              const { logoutAction } = await import('@/app/login/actions');
-              await logoutAction();
+              await fetch('/api/logout', { method: 'POST' });
+              // Redireciona para login no subdomínio correto
+              if (window.location.hostname.startsWith('admin.')) {
+                window.location.href = '/login';
+              } else {
+                window.location.href = '/login';
+              }
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all text-sm font-medium group"
           >
