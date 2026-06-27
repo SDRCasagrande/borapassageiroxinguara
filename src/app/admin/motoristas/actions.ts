@@ -2,12 +2,29 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { uploadToR2, deleteFromR2, isR2Configured } from "@/lib/r2";
 
 // ──────────────────────────────────────────
-// PROCESSAR FOTO EM BASE64
+// PROCESSAR FOTO — R2 (preferencial) ou base64 (fallback)
 // ──────────────────────────────────────────
 async function processarFoto(file: File | null): Promise<string | null> {
   if (!file || file.size === 0) return null;
+
+  // Limite de 5MB
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error('Foto muito grande. Máximo 5MB.');
+  }
+
+  // Se R2 configurado, faz upload pro Cloudflare
+  if (isR2Configured()) {
+    return await uploadToR2(file, {
+      folder: 'motoristas',
+      filename: file.name,
+      contentType: file.type,
+    });
+  }
+
+  // Fallback: base64 comprimido (se R2 não configurado)
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
   const base64 = buffer.toString('base64');
@@ -101,6 +118,12 @@ export async function removerMotorista(formData: FormData) {
   const motoristaId = formData.get('motoristaId') as string;
   if (!motoristaId) throw new Error('Motorista não encontrado');
 
+  // Busca foto pra deletar do R2
+  const motorista = await prisma.motorista.findUnique({ where: { id: motoristaId } });
+  if (motorista?.fotoUrl && isR2Configured() && motorista.fotoUrl.startsWith('http')) {
+    try { await deleteFromR2(motorista.fotoUrl); } catch {}
+  }
+
   // Remove corridas associadas primeiro, depois o motorista
   await prisma.corrida.deleteMany({ where: { motoristaId } });
   await prisma.motorista.delete({ where: { id: motoristaId } });
@@ -109,7 +132,6 @@ export async function removerMotorista(formData: FormData) {
   revalidatePath('/ranking');
 }
 
-// ──────────────────────────────────────────
 // ──────────────────────────────────────────
 // ZERAR MÊS (Reset Mensal com Histórico)
 // ──────────────────────────────────────────
@@ -182,6 +204,14 @@ export async function atualizarMotorista(formData: FormData) {
   if (!id || !nome || nome.trim() === '') throw new Error('Nome é obrigatório');
 
   const novaFotoUrl = await processarFoto(fotoFile);
+
+  // Se tem nova foto e a antiga era do R2, deleta a antiga
+  if (novaFotoUrl && isR2Configured()) {
+    const motoristaAtual = await prisma.motorista.findUnique({ where: { id } });
+    if (motoristaAtual?.fotoUrl && motoristaAtual.fotoUrl.startsWith('http')) {
+      try { await deleteFromR2(motoristaAtual.fotoUrl); } catch {}
+    }
+  }
 
   await prisma.motorista.update({
     where: { id },

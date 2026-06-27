@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Phone, MapPin, Car, CheckCircle2, ArrowLeft, Loader2, MessageCircle, AlertTriangle, X } from 'lucide-react';
+import { User, Phone, MapPin, Car, CheckCircle2, ArrowLeft, Loader2, MessageCircle, AlertTriangle, X, CreditCard } from 'lucide-react';
 import Link from 'next/link';
 
 function formatPhone(value: string): string {
@@ -12,8 +12,10 @@ function formatPhone(value: string): string {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
+const CNH_CATEGORIAS = ['A', 'B', 'AB', 'C', 'D', 'E'];
+
 export default function CadastroMotoristaPage() {
-  const [form, setForm] = useState({ nome: '', telefone: '', cidade: '', veiculo: '' });
+  const [form, setForm] = useState({ nome: '', telefone: '', cidade: '', veiculo: '', categoriaCnh: '' });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [toast, setToast] = useState<{ show: boolean; message: string; type: 'error' | 'info' }>({ show: false, message: '', type: 'error' });
@@ -123,10 +125,9 @@ export default function CadastroMotoristaPage() {
 
   return (
     <div className="min-h-screen bg-[#030712] flex items-center justify-center px-4 py-20 relative overflow-hidden">
-      {/* Background effects */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[60vw] bg-emerald-600/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Toast Notification */}
+      {/* Toast */}
       <AnimatePresence>
         {toast.show && (
           <motion.div
@@ -200,6 +201,24 @@ export default function CadastroMotoristaPage() {
                 required
                 className="bg-transparent outline-none w-full text-white placeholder:text-white/30"
               />
+            </div>
+          </div>
+
+          {/* Categoria CNH */}
+          <div className="group">
+            <label className="text-sm font-medium text-white/70 mb-2 block">Categoria da CNH</label>
+            <div className="flex items-center gap-3 bg-[#0a101d] border border-white/10 rounded-xl px-4 py-3.5 focus-within:border-emerald-500/50 focus-within:ring-2 focus-within:ring-emerald-500/10 transition-all">
+              <CreditCard className="w-5 h-5 text-white/30 group-focus-within:text-emerald-400 transition-colors" />
+              <select
+                value={form.categoriaCnh}
+                onChange={(e) => setForm({ ...form, categoriaCnh: e.target.value })}
+                className="bg-transparent outline-none w-full text-white appearance-none cursor-pointer [&>option]:bg-[#0a101d] [&>option]:text-white"
+              >
+                <option value="">Selecione a categoria</option>
+                {CNH_CATEGORIAS.map((cat) => (
+                  <option key={cat} value={cat}>Categoria {cat}</option>
+                ))}
+              </select>
             </div>
           </div>
 
