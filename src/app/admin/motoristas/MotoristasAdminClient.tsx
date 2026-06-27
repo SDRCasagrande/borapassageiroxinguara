@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Users, Plus, Car, Trash2, RotateCcw, Shield, Edit2, Check, X, Save } from "lucide-react";
+import { Users, Plus, Car, Trash2, RotateCcw, Shield, Edit2, Check, X, Save, AlertTriangle, Clock, Hash } from "lucide-react";
 import Link from "next/link";
 
 interface Motorista {
@@ -19,7 +19,7 @@ interface Props {
   adicionarCorridas: (formData: FormData) => Promise<void>;
   alterarStatus: (formData: FormData) => Promise<void>;
   removerMotorista: (formData: FormData) => Promise<void>;
-  zerarMes: () => Promise<void>;
+  zerarMes: (nomeMes: string) => Promise<void>;
   atualizarMotorista: (formData: FormData) => Promise<void>;
 }
 
@@ -30,6 +30,13 @@ export function MotoristasAdminClient({
   const sorted = [...motoristas].sort((a, b) => b.corridasMes - a.corridasMes || a.nome.localeCompare(b.nome));
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  // Modals State
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; motorista: Motorista | null }>({ isOpen: false, motorista: null });
+  const [fechamentoModal, setFechamentoModal] = useState(false);
+  const [nomeFechamento, setNomeFechamento] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [lancamentoModal, setLancamentoModal] = useState<{ isOpen: boolean; motorista: Motorista | null }>({ isOpen: false, motorista: null });
+
   if (dbError) {
     return (
       <div className="p-6 bg-rose-50 border border-rose-200 rounded-2xl">
@@ -39,8 +46,38 @@ export function MotoristasAdminClient({
     );
   }
 
+  const handleDelete = async () => {
+    if (!deleteModal.motorista) return;
+    setIsProcessing(true);
+    try {
+      const fd = new FormData();
+      fd.append("motoristaId", deleteModal.motorista.id);
+      await removerMotorista(fd);
+      setDeleteModal({ isOpen: false, motorista: null });
+    } catch (e) {
+      alert("Erro ao remover o motorista.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleFechamento = async () => {
+    if (!nomeFechamento.trim()) return;
+    setIsProcessing(true);
+    try {
+      await zerarMes(nomeFechamento);
+      setFechamentoModal(false);
+      setNomeFechamento("");
+      window.location.reload();
+    } catch (e) {
+      alert("Erro ao fechar o mês.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
-    <div className="w-full pb-12">
+    <div className="w-full pb-12 relative">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -52,15 +89,10 @@ export function MotoristasAdminClient({
           </div>
           <button
             type="button"
-            onClick={async () => {
-              if (confirm("⚠️ ZERAR todas as corridas do mês? Os motoristas continuam cadastrados, mas voltam para 0 corridas.")) {
-                await zerarMes();
-                window.location.reload();
-              }
-            }}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-50 border border-rose-200 rounded-xl text-sm font-medium text-rose-700 hover:bg-rose-100 transition-all"
+            onClick={() => setFechamentoModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-50 border border-rose-200 rounded-xl text-sm font-medium text-rose-700 hover:bg-rose-100 transition-all shadow-sm hover:shadow"
           >
-            <RotateCcw className="w-4 h-4" /> Zerar Mês
+            <RotateCcw className="w-4 h-4" /> Fechar Mês
           </button>
         </header>
 
@@ -83,7 +115,7 @@ export function MotoristasAdminClient({
                   <option value="alerta">🟠 Alerta</option>
                 </select>
               </div>
-              <button type="submit" className="w-full sm:w-auto bg-indigo-600 text-white font-medium px-5 py-2 rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 text-sm h-[38px]">
+              <button type="submit" className="w-full sm:w-auto bg-indigo-600 text-white font-medium px-5 py-2 rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 text-sm h-[38px] shadow-sm">
                 <Plus className="w-4 h-4" /> Cadastrar
               </button>
             </form>
@@ -167,45 +199,25 @@ export function MotoristasAdminClient({
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <form 
-                          className="flex items-center gap-2"
-                          onSubmit={async (e) => {
-                            e.preventDefault();
-                            const form = e.currentTarget;
-                            const fd = new FormData(form);
-                            const qtd = parseInt(fd.get("quantidade") as string, 10);
-                            
-                            // Cria um form fake pra chamar a action, pq a action original espera FormData
-                            const fakeFd = new FormData();
-                            fakeFd.append("motoristaId", m.id);
-                            fakeFd.append("quantidade", qtd.toString());
-                            await adicionarCorridas(fakeFd);
-                            form.reset();
-                          }}
-                        >
-                          <div className="font-black text-lg text-slate-800 w-12">{m.corridasMes}</div>
-                          <input type="number" name="quantidade" min="1" defaultValue="1" required className="w-16 border border-gray-300 rounded-md px-2 py-1.5 text-sm text-center focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none" />
-                          <button type="submit" className="bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1 transition-colors border border-amber-200">
+                        <div className="flex items-center gap-2">
+                          <div className="font-black text-lg text-slate-800 w-12 text-right mr-2">{m.corridasMes}</div>
+                          <button 
+                            type="button"
+                            onClick={() => setLancamentoModal({ isOpen: true, motorista: m })}
+                            className="bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1 transition-colors border border-amber-200 shadow-sm"
+                          >
                             <Plus className="w-3.5 h-3.5" /> Lançar
                           </button>
-                        </form>
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={() => setEditingId(m.id)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors" title="Editar Nome/Foto">
                             <Edit2 className="w-4 h-4" />
                           </button>
-                          <form action={async () => {
-                            if (confirm(`Remover ${m.nome} do ranking permanentemente?`)) {
-                              const fd = new FormData();
-                              fd.append("motoristaId", m.id);
-                              await removerMotorista(fd);
-                            }
-                          }}>
-                            <button type="submit" className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors" title="Remover Motorista">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </form>
+                          <button type="button" onClick={() => setDeleteModal({ isOpen: true, motorista: m })} className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors" title="Remover Motorista">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -216,6 +228,172 @@ export function MotoristasAdminClient({
           </div>
         </div>
       </div>
+
+      {/* DELETE MODAL */}
+      {deleteModal.isOpen && deleteModal.motorista && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-4 text-rose-600 mb-4">
+              <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Remover Motorista</h3>
+                <p className="text-sm text-slate-500">Esta ação não pode ser desfeita.</p>
+              </div>
+            </div>
+            
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
+              Você está prestes a remover permanentemente o motorista <strong className="text-slate-900">{deleteModal.motorista.nome}</strong>. O histórico de corridas dele continuará nos relatórios antigos, mas ele sairá do ranking atual.
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button 
+                onClick={() => setDeleteModal({ isOpen: false, motorista: null })}
+                disabled={isProcessing}
+                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleDelete}
+                disabled={isProcessing}
+                className="px-4 py-2 text-sm font-bold text-white bg-rose-600 rounded-xl hover:bg-rose-700 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+              >
+                {isProcessing ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                {isProcessing ? 'Removendo...' : 'Sim, remover agora'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FECHAMENTO MODAL */}
+      {fechamentoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-4 text-indigo-600 mb-4">
+              <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Save className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Fechamento Mensal</h3>
+                <p className="text-sm text-slate-500">Salvar histórico e zerar corridas.</p>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-sm text-slate-600 mb-4">
+                Digite um nome para identificar este relatório. O ranking atual será salvo permanentemente na página de Relatórios e as corridas de todos os motoristas voltarão para 0.
+              </p>
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Nome do Relatório *</label>
+              <input 
+                type="text" 
+                value={nomeFechamento}
+                onChange={(e) => setNomeFechamento(e.target.value)}
+                placeholder="Ex.: Junho 2026" 
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button 
+                onClick={() => { setFechamentoModal(false); setNomeFechamento(""); }}
+                disabled={isProcessing}
+                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleFechamento}
+                disabled={!nomeFechamento.trim() || isProcessing}
+                className="px-4 py-2 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50 disabled:bg-indigo-400 flex items-center gap-2"
+              >
+                {isProcessing ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                {isProcessing ? 'Processando...' : 'Confirmar Fechamento'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* LANCAMENTO MODAL */}
+      {lancamentoModal.isOpen && lancamentoModal.motorista && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-4 text-amber-600 mb-4">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Car className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Lançar Corridas</h3>
+                <p className="text-sm text-slate-500">{lancamentoModal.motorista.nome}</p>
+              </div>
+            </div>
+            
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              setIsProcessing(true);
+              try {
+                const form = e.currentTarget;
+                const fd = new FormData();
+                const qtd = (form.querySelector('[name=quantidade]') as HTMLInputElement).value;
+                const idExt = (form.querySelector('[name=idExterna]') as HTMLInputElement).value;
+                const hora = (form.querySelector('[name=horaCorrida]') as HTMLInputElement).value;
+                fd.append('motoristaId', lancamentoModal.motorista!.id);
+                fd.append('quantidade', qtd);
+                if (idExt) fd.append('idExterna', idExt);
+                if (hora) fd.append('horaCorrida', hora);
+                await adicionarCorridas(fd);
+                setLancamentoModal({ isOpen: false, motorista: null });
+              } catch (err) {
+                alert('Erro ao lançar corridas.');
+              } finally {
+                setIsProcessing(false);
+              }
+            }}>
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Quantidade de Corridas *</label>
+                  <input type="number" name="quantidade" min="1" defaultValue="1" required className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none" autoFocus />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                    <Hash className="w-3.5 h-3.5 text-slate-400" /> ID da Corrida <span className="text-slate-400 font-normal">(Opcional)</span>
+                  </label>
+                  <input type="text" name="idExterna" placeholder="Ex.: COR-20260627-001" className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" /> Hora da Corrida <span className="text-slate-400 font-normal">(Opcional)</span>
+                  </label>
+                  <input type="datetime-local" name="horaCorrida" className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3">
+                <button 
+                  type="button"
+                  onClick={() => setLancamentoModal({ isOpen: false, motorista: null })}
+                  disabled={isProcessing}
+                  className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isProcessing}
+                  className="px-4 py-2 text-sm font-bold text-white bg-amber-600 rounded-xl hover:bg-amber-700 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isProcessing ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  {isProcessing ? 'Lançando...' : 'Confirmar Lançamento'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

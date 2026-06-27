@@ -26,10 +26,12 @@ model Motorista {
 }
 
 model Corrida {
-  id          String   @id @default(uuid())
-  motoristaId String
-  motorista   Motorista @relation(fields: [motoristaId], references: [id])
-  data        DateTime @default(now())
+  id            String   @id @default(uuid())
+  idExterna     String?  // ID opcional da corrida no sistema externo
+  motoristaId   String
+  motorista     Motorista @relation(fields: [motoristaId], references: [id], onDelete: Cascade)
+  data          DateTime @default(now())
+  horaCorrida   DateTime? // Hora real da corrida (opcional)
 }
 
 model TrackingLink {
@@ -58,6 +60,20 @@ model MotoristaLead {
   veiculo     String?
   status      String   @default("PENDENTE") // PENDENTE, APROVADO, REJEITADO
   createdAt   DateTime @default(now())
+}
+
+model StatusApp {
+  id        String   @id @default("1")
+  ativo     Boolean  @default(true)
+  mensagem  String?
+  updatedAt DateTime @updatedAt
+}
+
+model FechamentoMes {
+  id        String   @id @default(uuid())
+  nome      String   // ex: "Junho 2026"
+  dados     Json     // Snapshot do ranking (array de motoristas e corridas)
+  createdAt DateTime @default(now())
 }
 
 model PageView {

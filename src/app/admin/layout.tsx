@@ -8,6 +8,7 @@ import {
   Users,
   UserPlus,
   Trophy,
+  FileBarChart,
   Menu, 
   X,
   Bell,
@@ -28,6 +29,7 @@ export default function AdminLayout({
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Rastreamento', href: '/tracking', icon: Link2 },
     { name: 'Motoristas', href: '/motoristas', icon: Users },
+    { name: 'Relatórios', href: '/relatorios', icon: FileBarChart },
     { name: 'Pré-Cadastros', href: '/leads', icon: UserPlus },
     { name: 'Ranking', href: 'https://ranking.borapassageiroxinguara.com.br', icon: Trophy },
   ];

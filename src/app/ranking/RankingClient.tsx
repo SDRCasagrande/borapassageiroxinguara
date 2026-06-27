@@ -164,7 +164,7 @@ export function RankingClient({ motoristas }: { motoristas: Motorista[] }) {
             <ArrowLeft className="w-4 h-4" /> Voltar
           </Link>
           <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring' }} className="inline-flex items-center justify-center mb-4">
-            <img src="/assets/Logotipo.png" alt="Bora Passageiro" className="h-16 sm:h-20 drop-shadow-[0_0_30px_rgba(251,191,36,0.6)] object-contain" />
+            <img src="/assets/Logotipo.png" alt="Bora Passageiro" className="h-24 sm:h-32 brightness-0 invert drop-shadow-[0_0_40px_rgba(255,255,255,0.3)] object-contain" />
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-3xl sm:text-5xl font-black">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">Hall da Fama</span>
@@ -246,7 +246,7 @@ export function RankingClient({ motoristas }: { motoristas: Motorista[] }) {
 
         {/* Footer */}
         <motion.footer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }} className="text-center mt-12 pb-8">
-          <img src="/assets/Logotipo.png" alt="Bora Passageiro" className="h-10 mx-auto opacity-30 brightness-0 invert mb-4" />
+          <img src="/assets/Logotipo.png" alt="Bora Passageiro" className="h-14 mx-auto opacity-40 brightness-0 invert mb-4" />
           <p className="text-white/20 text-sm">Bora Passageiro &copy; {new Date().getFullYear()}</p>
         </motion.footer>
       </div>

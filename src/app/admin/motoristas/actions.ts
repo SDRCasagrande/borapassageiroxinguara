@@ -47,8 +47,12 @@ export async function cadastrarMotorista(formData: FormData) {
 export async function adicionarCorridas(formData: FormData) {
   const motoristaId = formData.get('motoristaId') as string;
   const quantidade = parseInt(formData.get('quantidade') as string, 10);
+  const idExterna = formData.get('idExterna') as string || null;
+  const horaCorrida = formData.get('horaCorrida') as string || null;
 
   if (!motoristaId || !quantidade || quantidade <= 0) throw new Error('Dados inválidos');
+
+  const horaDate = horaCorrida ? new Date(horaCorrida) : null;
 
   // Usa transaction para garantir consistência
   await prisma.$transaction([
@@ -57,9 +61,11 @@ export async function adicionarCorridas(formData: FormData) {
       data: { corridasMes: { increment: quantidade } },
     }),
     prisma.corrida.createMany({
-      data: Array.from({ length: quantidade }).map(() => ({
+      data: Array.from({ length: quantidade }).map((_, idx) => ({
         motoristaId,
         data: new Date(),
+        idExterna: idExterna ? (quantidade > 1 ? `${idExterna}-${idx + 1}` : idExterna) : null,
+        horaCorrida: horaDate,
       })),
     })
   ]);
@@ -104,14 +110,39 @@ export async function removerMotorista(formData: FormData) {
 }
 
 // ──────────────────────────────────────────
-// ZERAR MÊS (Reset Mensal)
 // ──────────────────────────────────────────
-export async function zerarMes() {
+// ZERAR MÊS (Reset Mensal com Histórico)
+// ──────────────────────────────────────────
+export async function zerarMes(nomeMes: string) {
+  if (!nomeMes || nomeMes.trim() === '') throw new Error('Nome do mês é obrigatório');
+
+  // Busca todos os motoristas no momento atual, ordenados por corridas
+  const motoristasSnapshot = await prisma.motorista.findMany({
+    orderBy: { corridasMes: "desc" },
+    select: {
+      id: true,
+      nome: true,
+      fotoUrl: true,
+      status: true,
+      corridasMes: true,
+    }
+  });
+
+  // Salva o snapshot na tabela de Fechamento
+  await prisma.fechamentoMes.create({
+    data: {
+      nome: nomeMes.trim(),
+      dados: JSON.parse(JSON.stringify(motoristasSnapshot)), // Força serialização limpa
+    }
+  });
+
+  // Zera as corridas
   await prisma.motorista.updateMany({
     data: { corridasMes: 0 },
   });
 
   revalidatePath('/admin/motoristas');
+  revalidatePath('/admin/relatorios');
   revalidatePath('/ranking');
 }
 
