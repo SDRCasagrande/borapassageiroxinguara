@@ -69,8 +69,8 @@ export async function middleware(req: NextRequest) {
     isRewrite = true;
   }
 
-  // Proteger APIs administrativas (seed, motorista-lead admin actions, etc.)
-  if (url.pathname.startsWith('/api/seed')) {
+  // Proteger APIs administrativas (motorista-lead admin actions, etc.)
+  if (url.pathname.startsWith('/api/admin')) {
     isApiProtected = true;
   }
 

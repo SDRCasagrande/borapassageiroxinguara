@@ -112,5 +112,6 @@ export const motoristaDefaults: Record<string, any> = {
     whatsappNumber: '5594992777717',
     siteUrl: 'https://borapassageiroxinguara.com.br',
     cadastroUrl: '/motorista/cadastro',
+    cidadesDisponiveis: ['Xinguara - PA', 'Redenção - PA', 'Conceição do Araguaia - PA'],
   },
 };

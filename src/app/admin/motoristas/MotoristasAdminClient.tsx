@@ -38,6 +38,11 @@ export function MotoristasAdminClient({
   const [lancamentoModal, setLancamentoModal] = useState<{ isOpen: boolean; motorista: Motorista | null }>({ isOpen: false, motorista: null });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleteModal, setBulkDeleteModal] = useState(false);
+  
+  // Novos Modals para Ações em Lote
+  const [bulkLancamentoModal, setBulkLancamentoModal] = useState(false);
+  const [bulkCadastroModal, setBulkCadastroModal] = useState(false);
+  const [bulkCadastroNomes, setBulkCadastroNomes] = useState("");
 
   const allSelected = sorted.length > 0 && selectedIds.size === sorted.length;
   const someSelected = selectedIds.size > 0;
@@ -126,13 +131,22 @@ export function MotoristasAdminClient({
             </h1>
             <p className="text-sm text-slate-500 mt-1">Gerencie os perfis, lance corridas e acompanhe o ranking.</p>
           </div>
-          <button
-            type="button"
-            onClick={() => setFechamentoModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-50 border border-rose-200 rounded-xl text-sm font-medium text-rose-700 hover:bg-rose-100 transition-all shadow-sm hover:shadow"
-          >
-            <RotateCcw className="w-4 h-4" /> Fechar Mês
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setBulkCadastroModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-50 border border-indigo-200 rounded-xl text-sm font-medium text-indigo-700 hover:bg-indigo-100 transition-all shadow-sm hover:shadow"
+            >
+              <Users className="w-4 h-4" /> Cadastro Rápido (Lote)
+            </button>
+            <button
+              type="button"
+              onClick={() => setFechamentoModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-50 border border-rose-200 rounded-xl text-sm font-medium text-rose-700 hover:bg-rose-100 transition-all shadow-sm hover:shadow"
+            >
+              <RotateCcw className="w-4 h-4" /> Fechar Mês
+            </button>
+          </div>
         </header>
 
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
@@ -296,8 +310,15 @@ export function MotoristasAdminClient({
           <div className="w-px h-6 bg-slate-700" />
           <button
             type="button"
+            onClick={() => setBulkLancamentoModal(true)}
+            className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-1.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors shadow-sm"
+          >
+            <Car className="w-4 h-4" /> Lançar em Lote
+          </button>
+          <button
+            type="button"
             onClick={() => setBulkDeleteModal(true)}
-            className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-1.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors shadow-sm"
+            className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-1.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors shadow-sm ml-auto"
           >
             <Trash2 className="w-4 h-4" /> Apagar Selecionados
           </button>
@@ -523,6 +544,160 @@ export function MotoristasAdminClient({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* BULK LANCAMENTO MODAL */}
+      {bulkLancamentoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-4 text-amber-600 mb-4">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Car className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Lançamento em Lote</h3>
+                <p className="text-sm text-slate-500">Adicionar corridas para {selectedIds.size} motoristas.</p>
+              </div>
+            </div>
+            
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              setIsProcessing(true);
+              try {
+                const form = e.currentTarget;
+                const qtd = (form.querySelector('[name=quantidade]') as HTMLInputElement).value;
+                const idExt = (form.querySelector('[name=idExterna]') as HTMLInputElement).value;
+                const hora = (form.querySelector('[name=horaCorrida]') as HTMLInputElement).value;
+                
+                for (const id of selectedIds) {
+                  const fd = new FormData();
+                  fd.append('motoristaId', id);
+                  fd.append('quantidade', qtd);
+                  if (idExt) fd.append('idExterna', idExt);
+                  if (hora) fd.append('horaCorrida', hora);
+                  await adicionarCorridas(fd);
+                }
+                
+                setSelectedIds(new Set());
+                setBulkLancamentoModal(false);
+              } catch (err) {
+                alert('Erro ao lançar corridas em lote.');
+              } finally {
+                setIsProcessing(false);
+              }
+            }}>
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 max-h-32 overflow-y-auto">
+                <ul className="space-y-1">
+                  {sorted.filter(m => selectedIds.has(m.id)).map(m => (
+                    <li key={m.id} className="text-xs text-amber-800 font-medium">{m.nome}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Quantidade por Motorista *</label>
+                  <input type="number" name="quantidade" min="1" defaultValue="1" required className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none" autoFocus />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                    <Hash className="w-3.5 h-3.5 text-slate-400" /> ID da Corrida <span className="text-slate-400 font-normal">(Opcional)</span>
+                  </label>
+                  <input type="text" name="idExterna" placeholder="Opcional" className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3">
+                <button 
+                  type="button"
+                  onClick={() => setBulkLancamentoModal(false)}
+                  disabled={isProcessing}
+                  className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isProcessing}
+                  className="px-4 py-2 text-sm font-bold text-white bg-amber-600 rounded-xl hover:bg-amber-700 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isProcessing ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  {isProcessing ? 'Lançando...' : `Confirmar Lançamento`}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* BULK CADASTRO MODAL */}
+      {bulkCadastroModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-4 text-indigo-600 mb-4">
+              <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Cadastro Rápido (Lote)</h3>
+                <p className="text-sm text-slate-500">Cole uma lista de nomes para cadastrá-los.</p>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-sm text-slate-600 mb-2">
+                Digite ou cole os nomes dos motoristas (um por linha). Todos serão criados com status <span className="font-semibold text-emerald-600">Ativo</span> e 0 corridas.
+              </p>
+              <textarea 
+                value={bulkCadastroNomes}
+                onChange={(e) => setBulkCadastroNomes(e.target.value)}
+                placeholder="Exemplo:&#10;João da Silva&#10;Maria Souza&#10;Carlos Oliveira"
+                rows={6}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none resize-none bg-slate-50"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button 
+                type="button"
+                onClick={() => { setBulkCadastroModal(false); setBulkCadastroNomes(""); }}
+                disabled={isProcessing}
+                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                type="button"
+                onClick={async () => {
+                  const nomes = bulkCadastroNomes.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+                  if (nomes.length === 0) return;
+                  
+                  setIsProcessing(true);
+                  try {
+                    for (const nome of nomes) {
+                      const fd = new FormData();
+                      fd.append('nome', nome);
+                      fd.append('status', 'ativo');
+                      await cadastrarMotorista(fd);
+                    }
+                    setBulkCadastroModal(false);
+                    setBulkCadastroNomes("");
+                  } catch (err) {
+                    alert('Erro ao cadastrar motoristas.');
+                  } finally {
+                    setIsProcessing(false);
+                  }
+                }}
+                disabled={!bulkCadastroNomes.trim() || isProcessing}
+                className="px-4 py-2 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50 disabled:bg-indigo-400 flex items-center gap-2"
+              >
+                {isProcessing ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {isProcessing ? 'Processando...' : 'Cadastrar Motoristas'}
+              </button>
+            </div>
           </div>
         </div>
       )}
