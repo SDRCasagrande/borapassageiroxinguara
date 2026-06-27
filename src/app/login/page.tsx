@@ -56,11 +56,10 @@ export default function LoginPage() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="mx-auto mb-6"
+              className="flex justify-center mb-4"
             >
-              <img src="/assets/Logotipo.png" alt="Bora Passageiro" className="h-20 w-auto brightness-0 invert drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]" />
+              <img src="/assets/Logotipo.png" alt="Bora Passageiro" className="h-28 w-auto brightness-0 invert drop-shadow-[0_0_40px_rgba(255,255,255,0.15)]" />
             </motion.div>
-            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Bora Passageiro</h1>
             <p className="text-slate-400 text-sm">Acesse o painel administrativo</p>
           </div>
 
