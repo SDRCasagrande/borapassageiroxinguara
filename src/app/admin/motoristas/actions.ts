@@ -15,13 +15,17 @@ async function processarFoto(file: File | null): Promise<string | null> {
     throw new Error('Foto muito grande. Máximo 5MB.');
   }
 
-  // Se R2 configurado, faz upload pro Cloudflare
   if (isR2Configured()) {
-    return await uploadToR2(file, {
-      folder: 'motoristas',
-      filename: file.name,
-      contentType: file.type,
-    });
+    try {
+      return await uploadToR2(file, {
+        folder: 'motoristas',
+        filename: file.name,
+        contentType: file.type,
+      });
+    } catch (error) {
+      console.error("Erro no upload R2, fazendo fallback para base64:", error);
+      // Fallback manual se falhar
+    }
   }
 
   // Fallback: base64 comprimido (se R2 não configurado)

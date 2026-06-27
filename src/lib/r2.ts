@@ -28,12 +28,12 @@ export async function uploadToR2(
   let body: Buffer;
   let contentType = options?.contentType || 'image/jpeg';
 
-  if (file instanceof File) {
-    const arrayBuffer = await file.arrayBuffer();
+  if ('arrayBuffer' in file && typeof file.arrayBuffer === 'function') {
+    const arrayBuffer = await (file as File).arrayBuffer();
     body = Buffer.from(arrayBuffer);
-    contentType = file.type || contentType;
+    contentType = (file as File).type || contentType;
   } else {
-    body = file;
+    body = file as Buffer;
   }
 
   await s3.send(new PutObjectCommand({
