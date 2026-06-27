@@ -18,6 +18,8 @@ export default async function AdminPage() {
   let trackingLinks: any[] = [];
   let totalClicks = 0;
   let dbError = false;
+  let dbErrorMessage = "";
+  // ... (need to apply this properly, let's do it exactly)
   let pageViews: any = { passageiro: 0, motorista: 0, ranking: 0, total: 0 };
   let clicksBySlug: any = { playstore: 0, appstore: 0, whatsapp: 0 };
   let totalLeads = 0;
@@ -160,11 +162,13 @@ export default async function AdminPage() {
               <Shield className="w-5 h-5 text-rose-600" />
             </div>
             <div>
-              <h3 className="text-rose-800 font-semibold">Banco de Dados Offline</h3>
-              <p className="text-rose-600/80 text-sm mt-1">
-                Os dados abaixo estão zerados porque o banco de dados não está acessível.
-                Ligue o servidor do banco e atualize a página.
+              <h3 className="text-rose-800 font-semibold">Banco de Dados Offline ou Erro de Conexão</h3>
+              <p className="text-rose-600/80 text-sm mt-1 mb-2">
+                Os dados abaixo estão zerados porque ocorreu um erro ao acessar o banco de dados.
               </p>
+              <div className="p-3 bg-white/50 border border-rose-200/50 rounded-lg text-xs font-mono text-rose-700 break-all">
+                {dbErrorMessage || "Erro desconhecido. Verifique os logs do servidor."}
+              </div>
             </div>
           </div>
         )}
