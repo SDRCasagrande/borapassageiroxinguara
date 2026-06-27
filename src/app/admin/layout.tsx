@@ -102,12 +102,18 @@ export default function AdminLayout({
 
         {/* Footer */}
         <div className="p-4 border-t border-gray-100">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all text-sm font-medium group">
+          <button 
+            onClick={async () => {
+              const { logoutAction } = await import('@/app/login/actions');
+              await logoutAction();
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all text-sm font-medium group"
+          >
             <div className="w-9 h-9 rounded-lg bg-gray-100 group-hover:bg-rose-100 flex items-center justify-center transition-all">
               <LogOut className="w-[18px] h-[18px]" />
             </div>
             Sair do Painel
-          </Link>
+          </button>
         </div>
       </aside>
 

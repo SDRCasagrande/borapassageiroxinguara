@@ -32,23 +32,15 @@ export function middleware(req: NextRequest) {
 
   // PROTEÇÃO DO PAINEL ADMIN
   if (isAdminRoute) {
-    const basicAuth = req.headers.get('authorization');
-    if (basicAuth) {
-      const authValue = basicAuth.split(' ')[1];
-      const [user, pwd] = atob(authValue).split(':');
-      
-      const validUser = process.env.ADMIN_USER || 'admin@borapassageiroxinguara.com.br';
-      const validPwd = process.env.ADMIN_PASSWORD || 'bolacha123';
-
-      if (user === validUser && pwd === validPwd) {
-        return isRewrite ? NextResponse.rewrite(url) : NextResponse.next();
-      }
+    const adminToken = req.cookies.get('admin_token')?.value;
+    
+    // Se não tem o cookie ou não é válido, redireciona para o login
+    if (adminToken !== 'authenticated') {
+      // Se já estamos no admin. dominio, manda pra /login nele mesmo,
+      // Se for /admin normal, manda pra /login normal.
+      const loginUrl = new URL('/login', req.url);
+      return NextResponse.redirect(loginUrl);
     }
-
-    return new NextResponse('Acesso Negado. Credenciais inválidas.', {
-      status: 401,
-      headers: { 'WWW-Authenticate': 'Basic realm="Painel Admin Bora"' },
-    });
   }
 
   return isRewrite ? NextResponse.rewrite(url) : NextResponse.next();
