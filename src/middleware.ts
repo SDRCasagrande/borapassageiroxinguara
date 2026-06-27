@@ -38,17 +38,23 @@ export async function middleware(req: NextRequest) {
 
   // 1. Subdomínio RANKING (Gamificação)
   if (hostname.startsWith('ranking.')) {
-    url.pathname = `/ranking${url.pathname === '/' ? '' : url.pathname}`;
+    if (!url.pathname.startsWith('/ranking')) {
+      url.pathname = `/ranking${url.pathname === '/' ? '' : url.pathname}`;
+    }
     isRewrite = true;
   } 
   // 2. Subdomínio MOTORISTA
   else if (hostname.startsWith('motorista.')) {
-    url.pathname = `/motorista${url.pathname === '/' ? '' : url.pathname}`;
+    if (!url.pathname.startsWith('/motorista')) {
+      url.pathname = `/motorista${url.pathname === '/' ? '' : url.pathname}`;
+    }
     isRewrite = true;
   } 
   // 3. Subdomínio PASSAGEIRO
   else if (hostname.startsWith('passageiro.')) {
-    url.pathname = `/passageiro${url.pathname === '/' ? '' : url.pathname}`;
+    if (!url.pathname.startsWith('/passageiro')) {
+      url.pathname = `/passageiro${url.pathname === '/' ? '' : url.pathname}`;
+    }
     isRewrite = true;
   }
   // 4. Subdomínio ADMIN
