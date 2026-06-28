@@ -1,8 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { RankingClient } from "./RankingClient";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Removido force-dynamic para usar o Cache do Next.js (atualizado via revalidatePath)
 
 export default async function RankingPage() {
   let motoristas: any[] = [];
