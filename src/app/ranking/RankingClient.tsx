@@ -187,7 +187,7 @@ export function RankingClient({ motoristas }: { motoristas: Motorista[] }) {
           const currentOthers = others.slice(startIndex, startIndex + pageSize);
 
           return (
-            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5 }} className="max-w-2xl mx-auto">
+            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: currentPage === 1 ? 0.8 : 0 }} className="max-w-2xl mx-auto">
               <div className="bg-gradient-to-b from-[#1a1f3a]/80 to-[#0d1025]/80 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm">
                 <div className="px-6 py-4 border-b border-white/5 bg-white/[0.02]">
                   <h2 className="text-base font-bold flex items-center gap-2">
@@ -198,7 +198,7 @@ export function RankingClient({ motoristas }: { motoristas: Motorista[] }) {
                   {currentOthers.map((m, i) => {
                     const globalRank = startIndex + i + 4;
                     return (
-                      <motion.div key={m.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.7 + i * 0.05 }}
+                      <motion.div key={m.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: (currentPage === 1 ? 0.9 : 0) + i * 0.05 }}
                         className="flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.02] transition-colors"
                       >
                         <span className="w-10 text-white/30 font-mono font-bold">#{globalRank}</span>
