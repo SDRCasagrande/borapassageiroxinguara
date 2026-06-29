@@ -42,11 +42,17 @@ export function MotoristaProfileClient({
         </Link>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <img 
-              src={motorista.fotoUrl || `https://i.pravatar.cc/150?u=${motorista.id}`} 
-              alt={motorista.nome} 
-              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
-            />
+            {motorista.fotoUrl ? (
+              <img 
+                src={motorista.fotoUrl} 
+                alt={motorista.nome} 
+                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center border-4 border-white shadow-md">
+                <User className="w-10 h-10 text-slate-400" />
+              </div>
+            )}
             <div>
               <h1 className="text-3xl font-bold text-slate-900">{motorista.nome}</h1>
               <div className="flex items-center gap-2 mt-1.5">

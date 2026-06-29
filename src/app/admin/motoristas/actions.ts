@@ -61,6 +61,29 @@ export async function cadastrarMotorista(formData: FormData) {
 }
 
 // ──────────────────────────────────────────
+// CADASTRAR MOTORISTAS EM LOTE
+// ──────────────────────────────────────────
+export async function cadastrarMotoristasEmLote(nomes: string[]) {
+  if (!nomes || nomes.length === 0) return;
+
+  const nomesValidos = nomes.map(n => n.trim()).filter(n => n.length > 0);
+  if (nomesValidos.length === 0) return;
+
+  await prisma.motorista.createMany({
+    data: nomesValidos.map(nome => ({
+      nome,
+      status: 'ativo',
+      ativo: true,
+      corridasMes: 0,
+      pontos: 0,
+    })),
+  });
+
+  revalidatePath('/admin/motoristas');
+  revalidatePath('/ranking');
+}
+
+// ──────────────────────────────────────────
 // ADICIONAR CORRIDAS DO DIA
 // ──────────────────────────────────────────
 export async function adicionarCorridas(formData: FormData) {

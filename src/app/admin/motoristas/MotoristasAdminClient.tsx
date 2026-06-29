@@ -16,6 +16,7 @@ interface Props {
   motoristas: Motorista[];
   dbError: boolean;
   cadastrarMotorista: (formData: FormData) => Promise<void>;
+  cadastrarMotoristasEmLote: (nomes: string[]) => Promise<void>;
   adicionarCorridas: (formData: FormData) => Promise<void>;
   alterarStatus: (formData: FormData) => Promise<void>;
   removerMotorista: (formData: FormData) => Promise<void>;
@@ -25,7 +26,7 @@ interface Props {
 
 export function MotoristasAdminClient({
   motoristas, dbError,
-  cadastrarMotorista, adicionarCorridas, removerMotorista, zerarMes, atualizarMotorista
+  cadastrarMotorista, cadastrarMotoristasEmLote, adicionarCorridas, removerMotorista, zerarMes, atualizarMotorista
 }: Props) {
   const sorted = [...motoristas].sort((a, b) => b.corridasMes - a.corridasMes || a.nome.localeCompare(b.nome));
   // Modals State
@@ -41,7 +42,7 @@ export function MotoristasAdminClient({
   const [novoMotoristaModal, setNovoMotoristaModal] = useState(false);
   const [bulkLancamentoModal, setBulkLancamentoModal] = useState(false);
   const [bulkCadastroModal, setBulkCadastroModal] = useState(false);
-  const [bulkCadastroNomes, setBulkCadastroNomes] = useState("");
+  const [bulkCadastroNomes, setBulkCadastroNomes] = useState<string[]>(['']);
   
   const [lancamentoQtd, setLancamentoQtd] = useState(1);
   const [bulkLancamentoQtd, setBulkLancamentoQtd] = useState(1);
@@ -201,7 +202,13 @@ export function MotoristasAdminClient({
                       </td>
                       <td className="px-6 py-4">
                         <Link href={`/admin/motoristas/${m.id}`} className="flex items-center gap-3 hover:opacity-80">
-                          <img src={m.fotoUrl || `https://i.pravatar.cc/150?u=${m.id}`} alt={m.nome} className="w-10 h-10 rounded-full object-cover border border-gray-200 flex-shrink-0" />
+                          {m.fotoUrl ? (
+                            <img src={m.fotoUrl} alt={m.nome} className="w-10 h-10 rounded-full object-cover border border-gray-200 flex-shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border border-gray-200 flex-shrink-0">
+                              <Users className="w-5 h-5 text-slate-400" />
+                            </div>
+                          )}
                           <div className="font-semibold text-slate-800 hover:text-indigo-600 transition-colors">{m.nome}</div>
                         </Link>
                       </td>
@@ -606,23 +613,53 @@ export function MotoristasAdminClient({
             </div>
             
             <div className="mb-6">
-              <p className="text-sm text-slate-600 mb-2">
-                Digite ou cole os nomes dos motoristas (um por linha). Todos serão criados com status <span className="font-semibold text-emerald-600">Ativo</span> e 0 corridas.
+              <p className="text-sm text-slate-600 mb-4">
+                Adicione os nomes dos motoristas que deseja cadastrar. Todos serão criados com status <span className="font-semibold text-emerald-600">Ativo</span>.
               </p>
-              <textarea 
-                value={bulkCadastroNomes}
-                onChange={(e) => setBulkCadastroNomes(e.target.value)}
-                placeholder="Exemplo:&#10;João da Silva&#10;Maria Souza&#10;Carlos Oliveira"
-                rows={6}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none resize-none bg-slate-50"
-                autoFocus
-              />
+              
+              <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
+                {bulkCadastroNomes.map((nome, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs flex-shrink-0">
+                      {index + 1}
+                    </div>
+                    <input 
+                      type="text"
+                      value={nome}
+                      onChange={(e) => {
+                        const newNomes = [...bulkCadastroNomes];
+                        newNomes[index] = e.target.value;
+                        setBulkCadastroNomes(newNomes);
+                      }}
+                      placeholder="Ex: Carlos Oliveira"
+                      className="flex-1 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                    />
+                    {bulkCadastroNomes.length > 1 && (
+                      <button 
+                        type="button"
+                        onClick={() => setBulkCadastroNomes(bulkCadastroNomes.filter((_, i) => i !== index))}
+                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors flex-shrink-0"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              <button
+                type="button"
+                onClick={() => setBulkCadastroNomes([...bulkCadastroNomes, ''])}
+                className="mt-4 flex items-center gap-2 text-indigo-600 font-medium text-sm hover:text-indigo-700 transition-colors px-2 py-1 rounded-lg hover:bg-indigo-50 w-fit"
+              >
+                <Plus className="w-4 h-4" /> Adicionar outro
+              </button>
             </div>
 
             <div className="flex items-center justify-end gap-3">
               <button 
                 type="button"
-                onClick={() => { setBulkCadastroModal(false); setBulkCadastroNomes(""); }}
+                onClick={() => { setBulkCadastroModal(false); setBulkCadastroNomes(['']); }}
                 disabled={isProcessing}
                 className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
               >
@@ -631,26 +668,21 @@ export function MotoristasAdminClient({
               <button 
                 type="button"
                 onClick={async () => {
-                  const nomes = bulkCadastroNomes.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+                  const nomes = bulkCadastroNomes.map(n => n.trim()).filter(n => n.length > 0);
                   if (nomes.length === 0) return;
                   
                   setIsProcessing(true);
                   try {
-                    for (const nome of nomes) {
-                      const fd = new FormData();
-                      fd.append('nome', nome);
-                      fd.append('status', 'ativo');
-                      await cadastrarMotorista(fd);
-                    }
+                    await cadastrarMotoristasEmLote(nomes);
                     setBulkCadastroModal(false);
-                    setBulkCadastroNomes("");
+                    setBulkCadastroNomes(['']);
                   } catch (err) {
                     alert('Erro ao cadastrar motoristas.');
                   } finally {
                     setIsProcessing(false);
                   }
                 }}
-                disabled={!bulkCadastroNomes.trim() || isProcessing}
+                disabled={!bulkCadastroNomes.some(n => n.trim().length > 0) || isProcessing}
                 className="px-4 py-2 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50 disabled:bg-indigo-400 flex items-center gap-2"
               >
                 {isProcessing ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Trophy, Medal, Star, Crown, Flame, ArrowLeft, Lock } from 'lucide-react';
+import { Trophy, Medal, Star, Crown, Flame, ArrowLeft, Lock, User } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -86,7 +86,13 @@ function PodiumBlock({ motorista, rank, height, delay }: { motorista: Motorista;
         initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: delay + 0.3, type: 'spring' }}
         className={`${photoSizes[rank]} rounded-full p-1 bg-gradient-to-br ${gradients[rank]} ${glowColors[rank]} relative z-10`}
       >
-        <img src={motorista.fotoUrl || `https://i.pravatar.cc/300?u=${motorista.id}`} alt={motorista.nome} className="w-full h-full object-cover rounded-full border-4 border-[#0a0e1a]" />
+        {motorista.fotoUrl ? (
+          <img src={motorista.fotoUrl} alt={motorista.nome} className="w-full h-full object-cover rounded-full border-4 border-[#0a0e1a]" />
+        ) : (
+          <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center border-4 border-[#0a0e1a]">
+            <User className="w-1/2 h-1/2 text-slate-500" />
+          </div>
+        )}
         {rank === 1 && (
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 8, repeat: Infinity, ease: 'linear' }} className="absolute inset-[-4px] rounded-full border-2 border-transparent border-t-amber-400/60 border-r-amber-400/30 pointer-events-none" />
         )}
@@ -202,7 +208,13 @@ export function RankingClient({ motoristas }: { motoristas: Motorista[] }) {
                         className="flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.02] transition-colors"
                       >
                         <span className="w-10 text-white/30 font-mono font-bold">#{globalRank}</span>
-                        <img src={m.fotoUrl || `https://i.pravatar.cc/150?u=${m.id}`} alt={m.nome} className="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" />
+                        {m.fotoUrl ? (
+                          <img src={m.fotoUrl} alt={m.nome} className="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-white/10 flex-shrink-0">
+                            <User className="w-5 h-5 text-slate-500" />
+                          </div>
+                        )}
                         <div className="flex items-center gap-2 flex-1 min-w-0">
                           <span className="font-medium text-white truncate">{m.nome}</span>
                           <span className={`w-2 h-2 rounded-full flex-shrink-0 ${m.status === 'alerta' ? 'bg-orange-400' : 'bg-emerald-400'}`} />
