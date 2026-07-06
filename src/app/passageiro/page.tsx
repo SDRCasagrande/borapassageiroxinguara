@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { prisma } from "@/lib/prisma";
 import PassageiroClient from "./PassageiroClient";
+import { getSiteContent } from "@/lib/site-content";
 
 export default async function PassageiroPage() {
   const banners = await prisma.bannerPromocional.findMany({
@@ -9,5 +10,7 @@ export default async function PassageiroPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  return <PassageiroClient banners={banners} />;
+  const content = await getSiteContent("passageiro");
+
+  return <PassageiroClient banners={banners} content={content} />;
 }

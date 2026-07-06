@@ -26,8 +26,9 @@ const faqs = [
   }
 ];
 
-export function FAQ() {
+export function FAQ({ data }: { data?: any }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const items = data?.items || faqs;
 
   return (
     <section className="py-24 bg-[#020610] relative z-10 border-t border-white/[0.05]">
@@ -39,13 +40,17 @@ export function FAQ() {
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4"
           >
-            Dúvidas <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">Frequentes</span>
+            {data?.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: data.heading.replace('Frequentes', '<span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">Frequentes</span>') }} />
+            ) : (
+              <>Dúvidas <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">Frequentes</span></>
+            )}
           </motion.h2>
-          <p className="text-slate-400 text-lg">Tudo que você precisa saber para começar a lucrar hoje mesmo.</p>
+          <p className="text-slate-400 text-lg">{data?.subtitle || 'Tudo que você precisa saber para começar a lucrar hoje mesmo.'}</p>
         </div>
 
         <div className="space-y-4">
-          {faqs.map((faq, index) => {
+          {items.map((faq: any, index: number) => {
             const isOpen = openIndex === index;
             return (
               <motion.div 

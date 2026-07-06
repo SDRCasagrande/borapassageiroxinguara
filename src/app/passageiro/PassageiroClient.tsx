@@ -45,7 +45,7 @@ const scaleIn = {
 };
 
 /* ─── PREMIUM HEADER ──────────────────────────────────── */
-function PremiumHeader() {
+function PremiumHeader({ data }: { data?: any }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navLinks = [
     { href: '#vantagens', label: 'Vantagens' },
@@ -56,7 +56,7 @@ function PremiumHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-2xl border-b border-white/[0.06] text-white transition-all duration-500">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-        <a href="https://borapassageiroxinguara.com.br" className="flex items-center gap-2 group">
+        <a href={data?.siteUrl || "https://borapassageiroxinguara.com.br"} className="flex items-center gap-2 group">
           <img
             src="/assets/Logotipo.png"
             alt="Bora Passageiro"
@@ -120,7 +120,7 @@ function PremiumHeader() {
 }
 
 /* ─── HERO SECTION ────────────────────────────────────── */
-function HeroSection() {
+function HeroSection({ data }: { data?: any }) {
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 1000], [0, 250]);
   const y2 = useTransform(scrollY, [0, 1000], [0, -150]);
@@ -163,7 +163,7 @@ function HeroSection() {
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500" />
             </span>
             <span className="text-xs sm:text-sm font-semibold text-cyan-50 uppercase tracking-widest">
-              Mobilidade Premium em Xinguara
+              {data?.badge || 'Mobilidade Premium'}
             </span>
           </motion.div>
 
@@ -174,12 +174,10 @@ function HeroSection() {
             transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter leading-[0.9]"
           >
-            Sua corrida{' '}
-            <br className="hidden sm:block" />
-            está a um{' '}
+            {data?.title || 'Sua corrida está'}{' '}
             <br className="hidden sm:block" />
             <span className="bg-clip-text bg-gradient-to-r from-cyan-400 via-cyan-300 to-blue-500">
-              toque.
+              {data?.titleGradient || 'a um toque.'}
             </span>
           </motion.h1>
 
@@ -190,8 +188,7 @@ function HeroSection() {
             transition={{ duration: 0.8, delay: 0.25 }}
             className="text-lg sm:text-xl text-blue-100/50 max-w-xl font-medium leading-relaxed"
           >
-            A nova era da mobilidade urbana em Xinguara. Peça seu carro com
-            rapidez, segurança e tecnologia de ponta — direto do seu celular.
+            {data?.subtitle || 'A nova era da mobilidade urbana. Peça seu carro com rapidez e segurança.'}
           </motion.p>
 
           <motion.div
@@ -238,8 +235,8 @@ function HeroSection() {
 }
 
 /* ─── STATS COUNTER ───────────────────────────────────── */
-function StatsCounter() {
-  const stats = [
+function StatsCounter({ data }: { data?: any }) {
+  const stats = data?.items || [
     { value: '500+', label: 'Corridas / dia', suffix: '' },
     { value: '28+', label: 'Motoristas ativos', suffix: '' },
     { value: '4.9', label: 'Avaliação média', suffix: '★' },
@@ -289,13 +286,12 @@ function StatsCounter() {
 }
 
 /* ─── BENTO GRID FEATURES ─────────────────────────────── */
-function BentoGridFeatures() {
-  const features = [
+function BentoGridFeatures({ data }: { data?: any }) {
+  const features = data?.items || [
     {
       icon: Clock,
       title: 'Carros em Segundos',
-      description:
-        'Sem espera longa. Nosso algoritmo conecta você instantaneamente ao motorista mais próximo disponível.',
+      description: 'Sem espera longa. Nosso algoritmo conecta você instantaneamente ao motorista mais próximo disponível.',
       color: 'cyan',
       colSpan: 'md:col-span-2',
       large: true,
@@ -303,8 +299,7 @@ function BentoGridFeatures() {
     {
       icon: Shield,
       title: 'Segurança Total',
-      description:
-        'Monitoramento GPS em tempo real, verificação de antecedentes e compartilhamento de viagem ao vivo.',
+      description: 'Monitoramento GPS em tempo real, verificação de antecedentes e compartilhamento de viagem ao vivo.',
       color: 'blue',
       colSpan: '',
       large: false,
@@ -312,8 +307,7 @@ function BentoGridFeatures() {
     {
       icon: DollarSign,
       title: 'Preço Justo',
-      description:
-        'Tarifas transparentes calculadas antes da corrida. Sem surpresas, sem taxas ocultas.',
+      description: 'Tarifas transparentes calculadas antes da corrida. Sem surpresas, sem taxas ocultas.',
       color: 'emerald',
       colSpan: '',
       large: false,
@@ -321,8 +315,7 @@ function BentoGridFeatures() {
     {
       icon: MapPin,
       title: 'Cobertura Ampla',
-      description:
-        'Xinguara, Conceição e Redenção 100% integradas. Mobilidade sem fronteiras na sua região.',
+      description: 'Xinguara, Conceição e Redenção 100% integradas. Mobilidade sem fronteiras na sua região.',
       color: 'violet',
       colSpan: 'md:col-span-2',
       large: true,
@@ -368,22 +361,24 @@ function BentoGridFeatures() {
           className="mb-16 sm:mb-20"
         >
           <span className="text-cyan-400 text-sm font-bold tracking-widest uppercase mb-4 block">
-            Vantagens
+            {data?.sectionLabel || 'Vantagens'}
           </span>
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
-            Menos atrito.
+            {data?.heading || 'Menos atrito.'}
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-              Mais viagem.
+              {data?.headingGradient || 'Mais viagem.'}
             </span>
           </h2>
         </motion.div>
 
         {/* Bento Grid */}
         <div className="grid md:grid-cols-3 gap-5 sm:gap-6">
-          {features.map((feat, i) => {
-            const Icon = feat.icon;
-            const colors = colorMap[feat.color];
+          {features.map((feat: any, i: number) => {
+            // Se vier do DB não vai ter o componente de ícone, vai ter o nome. Como não temos um mapeamento forte aqui, mantemos compatibilidade se icon for string
+            const Icon = typeof feat.icon === 'string' ? MapPin : feat.icon; 
+            const colorName = feat.color || ['cyan', 'blue', 'emerald', 'violet'][i % 4];
+            const colors = colorMap[colorName] || colorMap['cyan'];
             return (
               <motion.div
                 key={feat.title}
@@ -430,27 +425,24 @@ function BentoGridFeatures() {
 }
 
 /* ─── COMO FUNCIONA ───────────────────────────────────── */
-function ComoFunciona() {
-  const steps = [
+function ComoFunciona({ data }: { data?: any }) {
+  const steps = data?.items || [
     {
       number: '01',
       title: 'Abra o App',
-      description:
-        'Baixe o Bora Passageiro, crie sua conta em segundos e defina seu destino no mapa interativo.',
+      description: 'Baixe o Bora Passageiro, crie sua conta em segundos e defina seu destino no mapa interativo.',
       icon: Smartphone,
     },
     {
       number: '02',
       title: 'Peça sua Corrida',
-      description:
-        'Com um toque, veja o preço estimado e conecte-se ao motorista mais próximo disponível.',
+      description: 'Com um toque, veja o preço estimado e conecte-se ao motorista mais próximo disponível.',
       icon: Navigation,
     },
     {
       number: '03',
       title: 'Chegue ao Destino',
-      description:
-        'Acompanhe o trajeto em tempo real, compartilhe com amigos e avalie sua experiência.',
+      description: 'Acompanhe o trajeto em tempo real, compartilhe com amigos e avalie sua experiência.',
       icon: MapPin,
     },
   ];
@@ -474,23 +466,20 @@ function ComoFunciona() {
           className="text-center mb-16 sm:mb-20"
         >
           <span className="text-cyan-400 text-sm font-bold tracking-widest uppercase mb-4 block">
-            Como funciona
+            {data?.sectionLabel || 'Como funciona'}
           </span>
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight">
-            Fácil como{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-              respirar.
-            </span>
+            {data?.heading || 'Fácil como respirar.'}
           </h2>
           <p className="mt-5 text-white/40 font-medium text-lg max-w-md mx-auto">
-            3 passos simples para estar a caminho do seu destino.
+            {data?.subtitle || '3 passos simples para estar a caminho do seu destino.'}
           </p>
         </motion.div>
 
         {/* Steps Grid */}
         <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
-          {steps.map((step, i) => {
-            const Icon = step.icon;
+          {steps.map((step: any, i: number) => {
+            const Icon = typeof step.icon === 'string' ? MapPin : (step.icon || MapPin);
             return (
               <motion.div
                 key={step.number}
@@ -542,7 +531,7 @@ import { Testimonials } from './components/Testimonials';
 import { FAQ } from './components/FAQ';
 
 /* ─── DOWNLOAD CTA ────────────────────────────────────── */
-function DownloadCTA() {
+function DownloadCTA({ data }: { data?: any }) {
   return (
     <section
       id="download"
@@ -593,21 +582,19 @@ function DownloadCTA() {
             className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-8"
           >
             <span className="text-cyan-400 text-sm font-bold tracking-widest uppercase">
-              Disponível agora
+              {data?.sectionLabel || 'Disponível agora'}
             </span>
 
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
-              Baixe agora{' '}
+              {data?.heading || 'Baixe agora'}{' '}
               <br className="hidden sm:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                e comece a viajar.
+                {data?.headingGradient || 'e comece a viajar.'}
               </span>
             </h2>
 
             <p className="text-white/40 text-lg max-w-lg leading-relaxed">
-              Disponível para Android e iOS. Baixe gratuitamente e tenha a
-              melhor experiência de mobilidade de Xinguara na palma da sua
-              mão.
+              {data?.subtitle || 'Disponível para Android e iOS. Baixe gratuitamente e tenha a melhor experiência de mobilidade de Xinguara na palma da sua mão.'}
             </p>
 
             {/* Store Badges */}
@@ -652,7 +639,7 @@ function DownloadCTA() {
 }
 
 /* ─── FOOTER ──────────────────────────────────────────── */
-function Footer() {
+function Footer({ data, config }: { data?: any; config?: any }) {
   return (
     <footer className="bg-[#020408] border-t border-white/[0.04] pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -665,8 +652,7 @@ function Footer() {
               className="h-10 w-auto brightness-0 invert mb-6"
             />
             <p className="text-white/30 text-sm leading-relaxed max-w-xs">
-              A plataforma de mobilidade urbana que conecta passageiros e
-              motoristas em Xinguara e região.
+              {data?.description || 'A plataforma de mobilidade urbana que conecta passageiros e motoristas em Xinguara e região.'}
             </p>
           </div>
 
@@ -728,13 +714,13 @@ function Footer() {
               {[
                 {
                   icon: Globe,
-                  href: 'https://www.instagram.com/bora.passageiroxinguara/',
+                  href: data?.instagramUrl || 'https://www.instagram.com/bora.passageiroxinguara/',
                   label: 'Instagram',
                   hoverColor: 'hover:bg-pink-500/20 hover:text-pink-400 hover:border-pink-500/30',
                 },
                 {
                   icon: MessageCircle,
-                  href: 'https://wa.me/5594992777717',
+                  href: data?.whatsappNumber ? `https://wa.me/${data.whatsappNumber}` : 'https://wa.me/5594992777717',
                   label: 'WhatsApp',
                   hoverColor:
                     'hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30',
@@ -880,24 +866,24 @@ function PromoBanner({ banners }: { banners: any[] }) {
 }
 
 /* ─── EXPORT PAGE ─────────────────────────────────────── */
-export default function PassageiroClient({ banners = [] }: { banners?: any[] }) {
+export default function PassageiroClient({ banners = [], content = {} }: { banners?: any[]; content?: any }) {
   return (
     <DownloadModalProvider>
     <div className="bg-[#030712] min-h-screen selection:bg-cyan-500/30 selection:text-cyan-50 overflow-x-hidden">
-      <PremiumHeader />
+      <PremiumHeader data={content.config} />
       <PromoBanner banners={banners} />
 
       <main>
-        <HeroSection />
-        <StatsCounter />
-        <BentoGridFeatures />
-        <ComoFunciona />
-        <Testimonials />
-        <FAQ />
-        <DownloadCTA />
+        <HeroSection data={content.hero} />
+        <StatsCounter data={content.stats} />
+        <BentoGridFeatures data={content.features} />
+        <ComoFunciona data={content.steps} />
+        <Testimonials data={content.testimonials} />
+        <FAQ data={content.faq} />
+        <DownloadCTA data={content.cta} />
       </main>
 
-      <Footer />
+      <Footer data={content.footer} config={content.config} />
       <FloatingWhatsApp />
     </div>
     </DownloadModalProvider>

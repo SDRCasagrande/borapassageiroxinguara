@@ -23,7 +23,9 @@ const testimonials = [
   }
 ];
 
-export function Testimonials() {
+export function Testimonials({ data }: { data?: any }) {
+  const items = data?.items || testimonials;
+
   return (
     <section className="py-24 bg-[#030712] relative overflow-hidden">
       {/* Background Blurs */}
@@ -38,7 +40,11 @@ export function Testimonials() {
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4"
           >
-            Quem usa, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">recomenda.</span>
+            {data?.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: data.heading.replace('recomenda.', '<span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">recomenda.</span>') }} />
+            ) : (
+              <>Quem usa, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">recomenda.</span></>
+            )}
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -47,12 +53,12 @@ export function Testimonials() {
             transition={{ delay: 0.1 }}
             className="text-slate-400 text-lg max-w-2xl mx-auto"
           >
-            Junte-se a milhares de passageiros que já transformaram a forma como se movem por Xinguara e região.
+            {data?.subtitle || 'Junte-se a milhares de passageiros que já transformaram a forma como se movem por Xinguara e região.'}
           </motion.p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
+          {items.map((t: any, i: number) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}
