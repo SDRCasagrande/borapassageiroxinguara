@@ -12,7 +12,8 @@ import {
   Menu, 
   X,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Gift
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -29,6 +30,7 @@ export default function AdminLayout({
     { name: 'Motoristas', href: '/motoristas', icon: Users },
     { name: 'Relatórios', href: '/relatorios', icon: FileBarChart },
     { name: 'Pré-Cadastros', href: '/leads', icon: UserPlus },
+    { name: 'Promoções', href: '/admin/banners', icon: Gift },
     { name: 'Ranking', href: 'https://ranking.borapassageiroxinguara.com.br', icon: Trophy },
   ];
 

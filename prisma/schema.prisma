@@ -107,3 +107,14 @@ model SiteContent {
 
   @@unique([page, section])
 }
+
+model BannerPromocional {
+  id        String   @id @default(uuid())
+  titulo    String
+  descricao String?
+  link      String
+  codigo    String?
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
