@@ -63,7 +63,7 @@ export default function LoginPage() {
       >
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
           {/* Shine effect */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
           {/* Header */}
           <div className="text-center mb-8">
@@ -78,7 +78,7 @@ export default function LoginPage() {
             <p className="text-slate-400 text-sm">Acesse o painel administrativo</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form id="login-form" onSubmit={handleSubmit} className="space-y-5">
             {/* Error message */}
             {error && (
               <motion.div 
@@ -98,6 +98,7 @@ export default function LoginPage() {
                   <Mail className="h-5 w-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
                 </div>
                 <input
+                  id="email"
                   type="email"
                   name="email"
                   required
@@ -116,6 +117,7 @@ export default function LoginPage() {
                   <Lock className="h-5 w-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
                 </div>
                 <input
+                  id="password"
                   type="password"
                   name="password"
                   required
@@ -141,7 +143,17 @@ export default function LoginPage() {
 
             {/* Submit Button */}
             <button
-              type="submit"
+              type="button"
+              onClick={() => {
+                const form = document.getElementById('login-form') as HTMLFormElement;
+                if (form) {
+                  if (form.checkValidity()) {
+                    form.requestSubmit();
+                  } else {
+                    form.reportValidity();
+                  }
+                }
+              }}
               disabled={loading}
               className="w-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-xl py-4 mt-6 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-indigo-500/25 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
             >
