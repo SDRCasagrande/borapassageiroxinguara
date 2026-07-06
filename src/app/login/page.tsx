@@ -124,12 +124,10 @@ export default function LoginPage() {
             </div>
 
             {/* Submit Button */}
-            <motion.button
+            <button
               type="submit"
               disabled={loading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-xl py-4 mt-6 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-xl py-4 mt-6 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-indigo-500/25 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
             >
               {loading ? (
                 <>
@@ -142,7 +140,7 @@ export default function LoginPage() {
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}
-            </motion.button>
+            </button>
           </form>
 
           {/* Footer */}
