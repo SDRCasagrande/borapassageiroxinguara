@@ -19,12 +19,13 @@ export default function LoginPage() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email');
     const password = formData.get('password');
+    const remember = formData.get('remember') === 'on';
 
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, remember }),
       });
 
       const result = await response.json();
@@ -100,6 +101,7 @@ export default function LoginPage() {
                   type="email"
                   name="email"
                   required
+                  autoComplete="email"
                   placeholder="admin@borapassageiro..."
                   className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl pl-12 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600"
                 />
@@ -117,10 +119,24 @@ export default function LoginPage() {
                   type="password"
                   name="password"
                   required
+                  autoComplete="current-password"
                   placeholder="••••••••"
                   className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl pl-12 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600"
                 />
               </div>
+            </div>
+
+            {/* Remember Me */}
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                name="remember"
+                id="remember"
+                className="h-4 w-4 rounded border-slate-800 bg-slate-950/50 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-900"
+              />
+              <label htmlFor="remember" className="ml-2 block text-sm text-slate-300 cursor-pointer">
+                Lembrar-me
+              </label>
             </div>
 
             {/* Submit Button */}

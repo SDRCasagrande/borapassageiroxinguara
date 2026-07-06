@@ -4,7 +4,7 @@ import { generateToken, validateCredentials, COOKIE_NAME } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, remember } = await req.json();
 
     // Delay para evitar brute force
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
-        maxAge: 60 * 60 * 24 * 7, // 7 dias
+        maxAge: remember ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 1, // 30 dias ou 1 dia
       });
 
       return NextResponse.json({ success: true });
