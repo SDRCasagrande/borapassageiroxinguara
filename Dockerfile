@@ -36,7 +36,7 @@ RUN adduser --system --uid 1001 nextjs
 
 # Create an entrypoint script to run prisma db push and start the server
 RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
-    echo 'npx prisma db push --accept-data-loss' >> /app/entrypoint.sh && \
+    echo 'node node_modules/prisma/build/index.js db push --accept-data-loss' >> /app/entrypoint.sh && \
     echo 'node server.js' >> /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh
 
