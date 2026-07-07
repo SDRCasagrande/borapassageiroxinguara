@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@/components/Analytics";
 import { MetaPixel, GoogleAnalytics } from "@/components/Marketing";
@@ -14,11 +14,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#10b981",
+};
+
 export const metadata: Metadata = {
   title: "Bora Passageiro",
   description: "Bora Passageiro - O melhor app de mobilidade de Xinguara",
   manifest: "/manifest.json",
-  themeColor: "#10b981",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

@@ -376,7 +376,7 @@ function BentoGridFeatures({ data }: { data?: any }) {
         <div className="grid md:grid-cols-3 gap-5 sm:gap-6">
           {features.map((feat: any, i: number) => {
             // Se vier do DB não vai ter o componente de ícone, vai ter o nome. Como não temos um mapeamento forte aqui, mantemos compatibilidade se icon for string
-            const Icon = typeof feat.icon === 'string' ? MapPin : feat.icon; 
+            const Icon = typeof feat.icon === 'string' ? MapPin : (feat.icon || MapPin); 
             const colorName = feat.color || ['cyan', 'blue', 'emerald', 'violet'][i % 4];
             const colors = colorMap[colorName] || colorMap['cyan'];
             return (
