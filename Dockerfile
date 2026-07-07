@@ -33,11 +33,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-# We will install prisma locally later in the /app directory
 
-# Create an entrypoint script to run prisma db push and start the server
+# Create an entrypoint script to start the server
 RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
-    echo 'npx prisma db push --accept-data-loss' >> /app/entrypoint.sh && \
     echo 'node server.js' >> /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh
 
@@ -59,8 +57,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
-# Install prisma locally so prisma.config.ts can find prisma/config
-RUN npm install prisma@7.8.0
 
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
 
