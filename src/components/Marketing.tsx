@@ -1,9 +1,11 @@
 'use client';
 
 import Script from 'next/script';
+import { usePathname } from 'next/navigation';
 
 export function MetaPixel({ pixelId }: { pixelId: string }) {
-  if (!pixelId) return null;
+  const pathname = usePathname();
+  if (!pixelId || (pathname && pathname.startsWith('/admin'))) return null;
 
   return (
     <>
@@ -39,7 +41,8 @@ export function MetaPixel({ pixelId }: { pixelId: string }) {
 }
 
 export function GoogleAnalytics({ gaId }: { gaId: string }) {
-  if (!gaId) return null;
+  const pathname = usePathname();
+  if (!gaId || (pathname && pathname.startsWith('/admin'))) return null;
 
   return (
     <>
