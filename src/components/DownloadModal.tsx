@@ -61,6 +61,7 @@ export function DownloadModalProvider({ children }: { children: React.ReactNode 
                   href={PLAY_STORE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={reportConversion}
                   className="flex items-center gap-4 w-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-500/30 rounded-2xl p-4 transition-all"
                 >
                   <img src="/assets/btn-google-play.png" alt="Google Play" className="h-10 w-auto object-contain" />
@@ -74,6 +75,7 @@ export function DownloadModalProvider({ children }: { children: React.ReactNode 
                   href={APP_STORE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={reportConversion}
                   className="flex items-center gap-4 w-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/30 rounded-2xl p-4 transition-all"
                 >
                   <img src="/assets/btn-app-store.png" alt="App Store" className="h-10 w-auto object-contain" />

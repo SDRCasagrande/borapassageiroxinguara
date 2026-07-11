@@ -1,6 +1,7 @@
 'use client';
 
 import { PLAY_STORE_URL, APP_STORE_URL } from './DownloadModal';
+import { reportConversion } from '@/lib/tracking';
 
 export function ActionButtons() {
     return (
@@ -9,6 +10,7 @@ export function ActionButtons() {
                 href={PLAY_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={reportConversion}
                 className="transform hover:scale-105 transition-transform duration-300 drop-shadow-xl"
             >
                 <img
@@ -22,6 +24,7 @@ export function ActionButtons() {
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={reportConversion}
                 className="transform hover:scale-105 transition-transform duration-300 drop-shadow-xl"
             >
                 <img
